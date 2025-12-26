@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using HotelManagementSystem.ViewModels;
 
+
 namespace HotelManagementSystem.ViewModels
 {
     public class LoginViewModel : BaseViewModel
@@ -29,12 +30,22 @@ namespace HotelManagementSystem.ViewModels
             }
         }
 
+
+
         public RelayCommand LoginCommand { get; }
+        public RelayCommand RegisterCommand { get; }
 
         public LoginViewModel(MainViewModel mainVM)
         {
             _mainVM = mainVM;
             LoginCommand = new RelayCommand(ExecuteLogin);
+            RegisterCommand = new RelayCommand(o => ExecuteGoToRegister());
+
+        }
+
+        private  void ExecuteGoToRegister()
+        {
+            _mainVM.CurrentView = new RegisterViewModel(_mainVM);
         }
 
         private void ExecuteLogin(object parameter)
@@ -75,8 +86,7 @@ namespace HotelManagementSystem.ViewModels
             switch (user.Role)
             {
                 case Enums.UserRole.Administrator:
-                    //_mainVM.CurrentView = new AdminViewModel();
-
+                    _mainVM.CurrentView = new AdminViewModel(_mainVM);
                     break;
                 case Enums.UserRole.Receptionist:
                     // _mainVM.CurrentView = new ReceptionistViewModel();

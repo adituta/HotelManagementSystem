@@ -4,6 +4,32 @@
              xmlns:local="clr-namespace:HotelManagementSystem"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+
+        <!-- Stilul pentru butoanele din meniul lateral al Administratorului -->
+        <Style x:Key="SidebarButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="20,0,0,0"/>
+            <Setter Property="Margin" Value="0,2"/>
+
+            <Style.Triggers>
+                <!-- Efect de hover (când treci cu mouse-ul peste buton) -->
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#34495E"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+
+                <!-- Efect când butonul este apăsat -->
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#1ABC9C"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
     </Application.Resources>
 </Application>

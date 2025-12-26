@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="HotelManagementSystem.Views.ManageEmployeesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HotelManagementSystem.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="White" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Formular Adăugare -->
+            <RowDefinition Height="*"/>
+            <!-- Tabel Angajați -->
+        </Grid.RowDefinitions>
+
+        <!-- Formular Adăugare/Editare -->
+        <Border Background="#F8F9FA" Padding="15" CornerRadius="5" Margin="0,0,0,20">
+            <StackPanel>
+                <TextBlock Text="Adaugă Angajat Nou" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                <UniformGrid Columns="3">
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Nume Complet:"/>
+                        <TextBox Text="{Binding NewUser.FullName, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Utilizator (Login):"/>
+                        <TextBox Text="{Binding NewUser.Username, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Parolă:"/>
+                        <TextBox Text="{Binding NewUser.Password, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Rol:"/>
+                        <ComboBox ItemsSource="{Binding RoleTypes}" SelectedItem="{Binding NewUser.Role}"/>
+                    </StackPanel>
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Etaj Asignat (doar Cameriste):"/>
+                        <TextBox Text="{Binding NewUser.AssignedFloor, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <Button Content="Salvează Angajat" Command="{Binding SaveEmployeeCommand}" 
+                        Background="#27AE60" Foreground="White" Margin="5,15,5,5" Height="30"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+
+        <!-- Tabelul cu Angajați -->
+        <DataGrid Grid.Row="1" ItemsSource="{Binding EmployeesList}" AutoGenerateColumns="False" 
+              CanUserAddRows="False" SelectionMode="Single" Background="Transparent">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nume" Binding="{Binding FullName}" Width="*"/>
+                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="100"/>
+                <DataGridTextColumn Header="Rol" Binding="{Binding Role}" Width="100"/>
+                <DataGridTextColumn Header="Etaj" Binding="{Binding AssignedFloor}" Width="50"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
