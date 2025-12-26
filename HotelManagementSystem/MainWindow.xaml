@@ -22,8 +22,24 @@
         <DataTemplate DataType="{x:Type viewmodels:RegisterViewModel}">
             <views:RegisterView/>
         </DataTemplate>
-        
-        
+
+        <DataTemplate DataType="{x:Type viewmodels:ClientDashboardViewModel}">
+            <views:ClientDashboardView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:MakeReservationViewModel}">
+            <views:MakeReservationView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:ReceptionViewModel}">
+            <views:ReceptionView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:MaidViewModel}">
+            <views:MaidView/>
+        </DataTemplate>
+
+
         <!-- Vom adăuga aici restul de pagini (AdminViewModel -> AdminView etc.) -->
         
     </Window.Resources>

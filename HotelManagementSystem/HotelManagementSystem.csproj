@@ -71,11 +71,18 @@
     <Compile Include="Migrations\202512260021423_UpdateModelsToLatest.Designer.cs">
       <DependentUpon>202512260021423_UpdateModelsToLatest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202512261258342_AdaugareFacilitatiSiSpa.cs" />
+    <Compile Include="Migrations\202512261258342_AdaugareFacilitatiSiSpa.Designer.cs">
+      <DependentUpon>202512261258342_AdaugareFacilitatiSiSpa.cs</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\ClientDashboardViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\MaidViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\MakeReservationViewModel.cs" />
     <Compile Include="ViewModels\ManageEmployeesViewModel.cs" />
+    <Compile Include="ViewModels\ReceptionViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="Views\AdminView.xaml.cs">
       <DependentUpon>AdminView.xaml</DependentUpon>
@@ -86,8 +93,17 @@
     <Compile Include="Views\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MaidView.xaml.cs">
+      <DependentUpon>MaidView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MakeReservationView.xaml.cs">
+      <DependentUpon>MakeReservationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ManageEmployeesView.xaml.cs">
       <DependentUpon>ManageEmployeesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReceptionView.xaml.cs">
+      <DependentUpon>ReceptionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RegisterView.xaml.cs">
       <DependentUpon>RegisterView.xaml</DependentUpon>
@@ -119,7 +135,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MaidView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MakeReservationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ManageEmployeesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReceptionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -162,6 +190,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202512260021423_UpdateModelsToLatest.resx">
       <DependentUpon>202512260021423_UpdateModelsToLatest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202512261258342_AdaugareFacilitatiSiSpa.resx">
+      <DependentUpon>202512261258342_AdaugareFacilitatiSiSpa.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -89,10 +89,13 @@ namespace HotelManagementSystem.ViewModels
                     _mainVM.CurrentView = new AdminViewModel(_mainVM);
                     break;
                 case Enums.UserRole.Receptionist:
-                    // _mainVM.CurrentView = new ReceptionistViewModel();
+                    _mainVM.CurrentView = new ReceptionViewModel();
                     break;
                 case Enums.UserRole.Cleaning:
-
+                    _mainVM.CurrentView = new MaidViewModel(user); 
+                    break;
+                case Enums.UserRole.Client:
+                    _mainVM.CurrentView = new ClientDashboardViewModel(_mainVM, user);
                     break;
                 default:
                     MessageBox.Show("Rol de utilizator necunoscut.");

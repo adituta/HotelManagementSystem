@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="HotelManagementSystem.Views.MakeReservationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HotelManagementSystem.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+
+    <Grid Background="White">
+        <StackPanel Margin="20">
+            <TextBlock Text="Caută Camere Disponibile" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" Foreground="#2C3E50"/>
+
+            <!-- Secțiunea de Filtre -->
+            <Border Background="#F8F9FA" Padding="15" CornerRadius="5" Margin="0,0,0,20">
+                <UniformGrid Columns="2">
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="Data Sosirii:" FontWeight="SemiBold"/>
+                        <DatePicker SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="Data Plecării:" FontWeight="SemiBold"/>
+                        <DatePicker SelectedDate="{Binding EndDate, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="Tip Cameră:" FontWeight="SemiBold"/>
+                        <ComboBox ItemsSource="{Binding RoomTypes}" SelectedItem="{Binding SelectedRoomType}" Margin="0,5"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="Nr. Persoane (adulți + copii):" FontWeight="SemiBold"/>
+                        <TextBox Text="{Binding NrPersons, UpdateSourceTrigger=PropertyChanged}" Margin="0,5" Height="25" VerticalContentAlignment="Center"/>
+                    </StackPanel>
+                </UniformGrid>
+            </Border>
+
+            <Button Content="Caută Disponibilitate" 
+                    Command="{Binding SearchCommand}" 
+                    Height="35" Background="#27AE60" Foreground="White" FontWeight="Bold" Cursor="Hand">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <!-- Lista de rezultate -->
+            <TextBlock Text="Camere Găsite:" Margin="0,20,0,5" FontWeight="Bold" Foreground="#7F8C8D"/>
+            <ListBox ItemsSource="{Binding AvailableRooms}" Margin="0,5,0,0" Height="250" BorderThickness="1" BorderBrush="#DCDDE1">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="#F1F2F6" BorderThickness="0,0,0,1" Padding="10">
+                            <Grid Width="650">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding RoomNumber, StringFormat='Cameră {0}'}" FontSize="16" FontWeight="Bold" Foreground="#2C3E50"/>
+                                    <TextBlock Text="{Binding PricePerNight, StringFormat='Preț: {0} RON / noapte'}" Foreground="#7F8C8D"/>
+                                </StackPanel>
+
+                                <Button Grid.Column="1" Content="Rezervă Acum" 
+                                        Command="{Binding DataContext.BookCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                        CommandParameter="{Binding}"
+                                        Background="#3498DB" Foreground="White" Padding="15,5" Cursor="Hand" VerticalAlignment="Center">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="3"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+    </Grid>
+</UserControl>
