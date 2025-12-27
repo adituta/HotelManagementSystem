@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="HotelManagementSystem.Views.FinanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F4F7F6">
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Raport Financiar și Performanță" FontSize="26" FontWeight="Bold" Margin="0,0,0,30" Foreground="#2C3E50"/>
+
+        <UniformGrid Grid.Row="1" Columns="3" Rows="2">
+            <!-- Card Venituri -->
+            <Border Background="White" Margin="10" CornerRadius="10" Padding="20">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="VENITURI TOTALE" Foreground="Gray" FontSize="12" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding TotalIncome, StringFormat='{}{0:N2} RON'}" FontSize="24" FontWeight="Bold" Foreground="#27AE60" HorizontalAlignment="Center" Margin="0,10"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Card Cheltuieli -->
+            <Border Background="White" Margin="10" CornerRadius="10" Padding="20">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="CHELTUIELI TOTALE" Foreground="Gray" FontSize="12" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding TotalExpenses, StringFormat='{}{0:N2} RON'}" FontSize="24" FontWeight="Bold" Foreground="#E74C3C" HorizontalAlignment="Center" Margin="0,10"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Card Profit -->
+            <Border Background="#2C3E50" Margin="10" CornerRadius="10" Padding="20">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="PROFIT NET" Foreground="#BDC3C7" FontSize="12" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding TotalProfit, StringFormat='{}{0:N2} RON'}" FontSize="28" FontWeight="Bold" Foreground="#1ABC9C" HorizontalAlignment="Center" Margin="0,10"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Statistici -->
+            <Border Background="White" Margin="10" CornerRadius="10" Padding="20">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="REZERVĂRI TOTALE" Foreground="Gray" FontSize="12" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding TotalReservationsCount}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="White" Margin="10" CornerRadius="10" Padding="20">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="MESE SERVITE" Foreground="Gray" FontSize="12" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding TotalMealsServed}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+    </Grid>
+</UserControl>

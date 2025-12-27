@@ -27,7 +27,11 @@ namespace HotelManagementSystem.Models
         public DbSet<ReservationRoom> ReservationRooms { get; set; }
         public DbSet<SpaAppointment> SpaAppointments { get; set; }
         public DbSet<FoodOrder> FoodOrders { get; set; }
+        public DbSet<Notification> Notifications { get; set; }  
 
+
+        public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<SpaService> SpaServices { get; set; }
 
 
         protected override void OnModelCreating (DbModelBuilder modelBuilder)

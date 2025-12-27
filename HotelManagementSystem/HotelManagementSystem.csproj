@@ -67,6 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\NotificationService.cs" />
     <Compile Include="Migrations\202512260021423_UpdateModelsToLatest.cs" />
     <Compile Include="Migrations\202512260021423_UpdateModelsToLatest.Designer.cs">
       <DependentUpon>202512260021423_UpdateModelsToLatest.cs</DependentUpon>
@@ -75,20 +76,40 @@
     <Compile Include="Migrations\202512261258342_AdaugareFacilitatiSiSpa.Designer.cs">
       <DependentUpon>202512261258342_AdaugareFacilitatiSiSpa.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202512270128123_AddFinalTablesAndNotifications.cs" />
+    <Compile Include="Migrations\202512270128123_AddFinalTablesAndNotifications.Designer.cs">
+      <DependentUpon>202512270128123_AddFinalTablesAndNotifications.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\ClientDashboardViewModel.cs" />
+    <Compile Include="ViewModels\FacilitiesViewModel.cs" />
+    <Compile Include="ViewModels\FinanceViewModel.cs" />
+    <Compile Include="ViewModels\InvoiceViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MaidViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MakeReservationViewModel.cs" />
     <Compile Include="ViewModels\ManageEmployeesViewModel.cs" />
+    <Compile Include="ViewModels\MyReservationsViewModel.cs" />
+    <Compile Include="ViewModels\ReceptionMapViewModel.cs" />
     <Compile Include="ViewModels\ReceptionViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
+    <Compile Include="ViewModels\SpaStaffViewModel.cs" />
     <Compile Include="Views\AdminView.xaml.cs">
       <DependentUpon>AdminView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ClientDashboardView.xaml.cs">
       <DependentUpon>ClientDashboardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FacilitiesView.xaml.cs">
+      <DependentUpon>FacilitiesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FinanceView.xaml.cs">
+      <DependentUpon>FinanceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InvoiceView.xaml.cs">
+      <DependentUpon>InvoiceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
@@ -102,11 +123,17 @@
     <Compile Include="Views\ManageEmployeesView.xaml.cs">
       <DependentUpon>ManageEmployeesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ReceptionMapView.xaml.cs">
+      <DependentUpon>ReceptionMapView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ReceptionView.xaml.cs">
       <DependentUpon>ReceptionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RegisterView.xaml.cs">
       <DependentUpon>RegisterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SpaStaffView.xaml.cs">
+      <DependentUpon>SpaStaffView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -131,6 +158,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\FacilitiesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FinanceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\InvoiceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\LoginView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -147,11 +186,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ReceptionMapView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ReceptionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RegisterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SpaStaffView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -194,6 +241,9 @@
     <EmbeddedResource Include="Migrations\202512261258342_AdaugareFacilitatiSiSpa.resx">
       <DependentUpon>202512261258342_AdaugareFacilitatiSiSpa.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202512270128123_AddFinalTablesAndNotifications.resx">
+      <DependentUpon>202512270128123_AddFinalTablesAndNotifications.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -208,6 +258,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Assets\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

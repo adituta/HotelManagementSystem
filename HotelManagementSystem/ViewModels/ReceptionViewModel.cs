@@ -52,6 +52,7 @@ namespace HotelManagementSystem.ViewModels
                 {
                     dbRes.Status = ReservationStatus.Active;
                     db.SaveChanges();
+                    NotificationService.Send(res.UserId, "Rezervarea dvs. a fost confirmată! Menul de facilități este acum activ.");
                     MessageBox.Show("Rezervare confirmată! Clientul are acum acces la servicii.");
                     LoadPendingReservations();
                 }

@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="HotelManagementSystem.Views.FacilitiesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Background="White" d:DesignHeight="600" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <!-- Definim convertoarele aici pentru a fi recunoscute în acest fișier -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- VARIANTĂ ALBUM: Vizibilă doar dacă NU este în sejur activ -->
+        <!-- Am folosit o metodă alternativă: dacă IsSejurActiv e True, acest StackPanel devine ASCUNS (Collapsed) prin Trigger -->
+        <StackPanel Margin="20">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSejurActiv}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+
+            <TextBlock Text="Facilități Hotel (Prezentare)" FontSize="24" Margin="20" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <!-- Am comentat imaginea ca să nu-ți dea eroare dacă nu ai fișierul pe disc -->
+            <!-- <Image Source="/Assets/spa_promo.jpg" Height="200"/> -->
+            <Border Background="#FDEBD0" Padding="20" CornerRadius="10">
+                <TextBlock Text="Meniul de comenzi și rezervările SPA devin disponibile după ce Recepția confirmă sosirea dumneavoastră." 
+                           Foreground="#D35400" HorizontalAlignment="Center" TextWrapping="Wrap" FontSize="16" TextAlignment="Center"/>
+            </Border>
+        </StackPanel>
+
+        <!-- VARIANTĂ INTERACTIVĂ: Vizibilă doar dacă e activ -->
+        <Grid Visibility="{Binding IsSejurActiv, Converter={StaticResource BoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- SECTIUNE RESTAURANT -->
+            <Border Grid.Column="0" BorderBrush="#EEEEEE" BorderThickness="0,0,1,0" Padding="15">
+                <StackPanel>
+                    <TextBlock Text="🍴 Restaurant" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" Foreground="#D35400"/>
+                    <TextBlock Text="Selectează Prânz:"/>
+                    <ComboBox ItemsSource="{Binding LunchMenu}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedLunch}" Height="30" Margin="0,5"/>
+                    <TextBlock Text="Selectează Cină:" Margin="0,10,0,0"/>
+                    <ComboBox ItemsSource="{Binding DinnerMenu}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedDinner}" Height="30" Margin="0,5"/>
+                    <Button Content="Trimite Comanda" Command="{Binding OrderFoodCommand}" 
+                            Margin="0,30,0,0" Height="40" Background="#E67E22" Foreground="White" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+
+            <!-- SECTIUNE SPA -->
+            <Border Grid.Column="1" Padding="15">
+                <StackPanel>
+                    <TextBlock Text="🧖 Serivicii SPA" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" Foreground="#8E44AD"/>
+                    <TextBlock Text="Alege Serviciul:"/>
+                    <ComboBox ItemsSource="{Binding SpaServices}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSpaService}" Height="30" Margin="0,5"/>
+                    <TextBlock Text="Interval Orar:" Margin="0,10,0,0"/>
+                    <ComboBox ItemsSource="{Binding TimeSlots}" SelectedItem="{Binding SelectedSlot}" Height="30" Margin="0,5"/>
+                    <TextBlock Text="Număr Persoane:" Margin="0,10,0,0"/>
+                    <TextBox Text="{Binding SpaPersonsCount}" Height="30" VerticalContentAlignment="Center" Margin="0,5"/>
+                    <Button Content="Rezervă SPA" Command="{Binding BookSpaCommand}" 
+                            Margin="0,30,0,0" Height="40" Background="#9B59B6" Foreground="White" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+
+            <!-- SECTIUNE CURATENIE -->
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Background="#F9F9F9" Margin="10,20,10,10" Padding="15" CornerRadius="10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Aveți nevoie de curățenie în cameră?" VerticalAlignment="Center" Margin="0,0,20,0" FontSize="14"/>
+                    <Button Content="SOLICITĂ CURĂȚENIE" Command="{Binding RequestCleaningCommand}" 
+                            Padding="20,10" Background="#2980B9" Foreground="White" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

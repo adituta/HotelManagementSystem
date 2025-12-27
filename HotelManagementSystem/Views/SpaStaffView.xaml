@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="HotelManagementSystem.Views.SpaStaffView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#FDFEFE">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Solicitări Servicii SPA" FontSize="24" FontWeight="Bold" Foreground="#8E44AD"/>
+            <TextBlock Text="Cererile clienților pentru ziua curentă ce așteaptă confirmare" Foreground="Gray"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" ItemsSource="{Binding PendingAppointments}" 
+                  AutoGenerateColumns="False" CanUserAddRows="False" 
+                  Background="Transparent" BorderThickness="0" RowHeight="40">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Client" Binding="{Binding Reservation.User.FullName}" Width="*"/>
+                <DataGridTextColumn Header="Serviciu" Binding="{Binding SpaService.Name}" Width="150"/>
+                <DataGridTextColumn Header="Ora" Binding="{Binding StartTime, StringFormat=\{0:hh\\:mm\}}" Width="80"/>
+                <DataGridTextColumn Header="Persoane" Binding="{Binding PersonsCount}" Width="80"/>
+                <DataGridTemplateColumn Header="Acțiuni" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Acceptă" 
+                                    Command="{Binding DataContext.AcceptCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                    CommandParameter="{Binding}"
+                                    Background="#27AE60" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

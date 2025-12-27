@@ -1,50 +1,76 @@
 ﻿<Window x:Class="HotelManagementSystem.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:HotelManagementSystem.ViewModels"
         xmlns:views="clr-namespace:HotelManagementSystem.Views"
-        Title="Hotel Management" Height="600" Width="1000">
+        mc:Ignorable="d"
+        Title="Hotel Management System" Height="700" Width="1100">
 
     <Window.Resources>
-        <!-- Aici îi spunem WPF-ului: Când vezi un LoginViewModel, desenează un LoginView -->
+        <!-- Mapare ViewModels -> Views -->
+
+        
         <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
             <views:LoginView/>
         </DataTemplate>
 
+        
+  
+        <DataTemplate DataType="{x:Type viewmodels:RegisterViewModel}">
+            <views:RegisterView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type viewmodels:AdminViewModel}">
             <views:AdminView/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewmodels:ClientDashboardViewModel}">
+            <views:ClientDashboardView/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:ManageEmployeesViewModel}">
             <views:ManageEmployeesView/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:RegisterViewModel}">
-            <views:RegisterView/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type viewmodels:ClientDashboardViewModel}">
-            <views:ClientDashboardView/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type viewmodels:MakeReservationViewModel}">
-            <views:MakeReservationView/>
-        </DataTemplate>
-
         <DataTemplate DataType="{x:Type viewmodels:ReceptionViewModel}">
             <views:ReceptionView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:ReceptionMapViewModel}">
+            <views:ReceptionMapView/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewmodels:MaidViewModel}">
             <views:MaidView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type viewmodels:FacilitiesViewModel}">
+            <views:FacilitiesView/>
+        </DataTemplate>
 
-        <!-- Vom adăuga aici restul de pagini (AdminViewModel -> AdminView etc.) -->
+        <DataTemplate DataType="{x:Type viewmodels:InvoiceViewModel}">
+            <views:InvoiceView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:SpaStaffViewModel}">
+            <views:SpaStaffView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:FinanceViewModel}">
+            <views:FinanceView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:MakeReservationViewModel}">
+            <views:MakeReservationView/>
+        </DataTemplate>
         
+       
     </Window.Resources>
+
     <Grid>
-        <!---Acesta este containerul dinamic-->
+        <!-- Containerul care afișează pagina curentă -->
         <ContentControl Content="{Binding CurrentView}"/>
     </Grid>
-</Window>
+</Window> 

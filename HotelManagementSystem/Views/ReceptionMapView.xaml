@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="HotelManagementSystem.Views.ReceptionMapView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F4F6F7">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <!-- Gridul de camere -->
+            <ColumnDefinition Width="300"/>
+            <!-- Panou rezervare pe loc -->
+        </Grid.ColumnDefinitions>
+
+        <!-- GRIDUL DE CAMERE (Harta Hotelului) -->
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10">
+                <TextBlock Text="Stare Camere Hotel (Toate Etajele)" FontSize="20" FontWeight="Bold" Margin="10"/>
+                <ItemsControl ItemsSource="{Binding AllRooms}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="10"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Margin="4" Height="80" 
+                                    Command="{Binding DataContext.SelectRoomCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"
+                                    BorderThickness="2">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="Gray" BorderThickness="1">
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding RoomNumber}" FontWeight="Bold" HorizontalAlignment="Center" Foreground="White"/>
+                                                <TextBlock Text="{Binding Status}" FontSize="9" HorizontalAlignment="Center" Foreground="White"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="Free">
+                                                <Setter Property="Background" Value="#27AE60"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Occupied">
+                                                <Setter Property="Background" Value="#E74C3C"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="CleaningRequired">
+                                                <Setter Property="Background" Value="#F1C40F"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="CleaningInProgress">
+                                                <Setter Property="Background" Value="#3498DB"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- PANOU REZERVARE PE LOC -->
+        <Border Grid.Column="1" Background="White" BorderBrush="#D5DBDB" BorderThickness="1,0,0,0" Padding="20">
+            <StackPanel>
+                <TextBlock Text="Rezervare Rapidă" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                <TextBlock Text="Cameră Selectată:" Foreground="Gray"/>
+                <TextBlock Text="{Binding SelectedRoom.RoomNumber, FallbackValue='Niciuna'}" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                <TextBlock Text="Selectează Client:"/>
+                <ComboBox ItemsSource="{Binding AllClients}" DisplayMemberPath="FullName" SelectedItem="{Binding SelectedClient}" Margin="0,5,0,15"/>
+
+                <TextBlock Text="Data Sosirii:"/>
+                <DatePicker SelectedDate="{Binding StartDate}" Margin="0,5,0,10"/>
+
+                <TextBlock Text="Data Plecării:"/>
+                <DatePicker SelectedDate="{Binding EndDate}" Margin="0,5,0,20"/>
+
+                <Button Content="CREEAZĂ REZERVARE" 
+                        Command="{Binding BookOnSpotCommand}"
+                        IsEnabled="{Binding IsRoomSelected}"
+                        Height="40" Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
+
+                <TextBlock Text="* Se pot rezerva doar camerele verzi (Free)" FontSize="10" Foreground="Red" Margin="0,10" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

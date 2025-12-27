@@ -21,6 +21,7 @@ namespace HotelManagementSystem.ViewModels
 
         public RelayCommand LogoutCommand { get; }
         public RelayCommand ShowEmployeesCommand { get; }
+        public RelayCommand ShowFinanceCommand { get; }
 
         public AdminViewModel(MainViewModel mainVM)
         {
@@ -35,6 +36,10 @@ namespace HotelManagementSystem.ViewModels
 
             //Optional, deschide automat angajatii la inceput
             CurrentAdminSection = new ManageEmployeesViewModel();
+
+
+            //Punem sa afisam meniul pentru Finante
+            ShowFinanceCommand = new RelayCommand(o => CurrentAdminSection = new FinanceViewModel());
         }
 }
 }

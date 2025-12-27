@@ -7,6 +7,7 @@
     using System.Data.Entity.Migrations;
     using System.Linq;
     using System.Windows.Controls;
+    using System.Windows;
 
     internal sealed class Configuration : DbMigrationsConfiguration<HotelManagementSystem.Models.HotelDBContext>
     {
@@ -50,6 +51,41 @@
                 }
 
             }
+
+
+            // --- 1. POPULARE MENIU RESTAURANT ---
+            context.MenuItems.AddOrUpdate(m => m.Name,
+                // Mic Dejun (Preț 0, inclus)
+                new Models.MenuItem { Name = "Mic Dejun Continental", Category = "Breakfast", Price = 0, InternalCost = 25, IsIncludedInStay = true },
+
+                // Prânz
+                new Models.MenuItem { Name = "Ciorbă de văcuță", Category = "Lunch", Price = 25, InternalCost = 10, IsIncludedInStay = false },
+                new Models.MenuItem { Name = "Meniu Prânz (Pui cu cartofi)", Category = "Lunch", Price = 35, InternalCost = 20, IsIncludedInStay = false },
+                new Models.MenuItem { Name = "Paste Carbonara", Category = "Lunch", Price = 30, InternalCost = 20, IsIncludedInStay = false },
+
+                // Cină
+                new Models.MenuItem { Name = "Friptură de porc la grătar", Category = "Dinner", Price = 45, InternalCost = 30, IsIncludedInStay=false },
+                new Models.MenuItem { Name = "Salată Caesar", Category = "Dinner", Price = 35, InternalCost = 25, IsIncludedInStay = false},
+                new Models.MenuItem { Name = "Pește cu legume", Category = "Dinner", Price = 50, InternalCost = 32, IsIncludedInStay = false}
+            );
+
+            // --- 2. POPULARE SERVICII SPA ---
+            context.SpaServices.AddOrUpdate(s => s.Name,
+                new SpaService { Name = "Saună Finlandeză", PricePerPerson = 50, MaxCapacityPerSlot = 10 },
+                new SpaService { Name = "Masaj de relaxare", PricePerPerson = 120, MaxCapacityPerSlot = 10 },
+                new SpaService { Name = "Hammam (Baie Turcească)", PricePerPerson = 80, MaxCapacityPerSlot = 10 }
+            );
+
+            // Salvează modificările
+            context.SaveChanges();
+
+
+
+
+
+
+
+
         }
     }
 }
