@@ -51,6 +51,7 @@ namespace HotelManagementSystem.ViewModels
             set { _allMyReservations = value; OnPropertyChanged(nameof(AllMyReservations)); }
         }
 
+        public RelayCommand ShowNotificationsCommand { get; }
         public ClientDashboardViewModel(MainViewModel mainVM, User user)
         {
             _mainVM = mainVM;
@@ -71,6 +72,9 @@ namespace HotelManagementSystem.ViewModels
             {
                 CurrentClientSection = new InvoiceViewModel(_loggedUser);
             });
+
+            //afisare notificari
+            ShowNotificationsCommand = new RelayCommand(o => System.Windows.MessageBox.Show("Nu aveți notificări noi."));
 
             // Pagina implicită
             CurrentClientSection = new MakeReservationViewModel(_loggedUser);

@@ -11,7 +11,7 @@ namespace HotelManagementSystem.Enums
         Administrator =1,
         Receptionist = 2,
         Cleaning = 3,
-        Coook = 4,
+        Cook = 4,
         SpaStaff = 5,
         Client=6
     }
@@ -26,7 +26,7 @@ namespace HotelManagementSystem.Enums
     {
         Free=1,
         Occupied=2,
-        CleaningReuired=3,
+        CleaningRequired=3,
         CleaningInProgress=4
     }
 

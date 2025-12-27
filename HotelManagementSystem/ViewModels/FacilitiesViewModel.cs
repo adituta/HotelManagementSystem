@@ -41,6 +41,11 @@ namespace HotelManagementSystem.ViewModels
             BookSpaCommand = new RelayCommand(o => ExecuteBookSpa());
             RequestCleaningCommand = new RelayCommand(o => ExecuteRequestCleaning());
         }
+        
+
+        public bool IsSejurActiv => _activeReservation != null;
+
+
 
         private void LoadActiveData()
         {
@@ -62,6 +67,8 @@ namespace HotelManagementSystem.ViewModels
                 LunchMenu = db.Set<MenuItem>().Where(m => m.Category == "Lunch").ToList();
                 DinnerMenu = db.Set<MenuItem>().Where(m => m.Category == "Dinner").ToList();
                 SpaServices = db.Set<SpaService>().ToList();
+
+                OnPropertyChanged(nameof(IsSejurActiv));
             }
         }
 
@@ -149,7 +156,7 @@ namespace HotelManagementSystem.ViewModels
                 if (room != null)
                 {
                     var dbRoom = db.Rooms.Find(room.Id);
-                    dbRoom.Status = RoomStatus.CleaningReuired;
+                    dbRoom.Status = RoomStatus.CleaningRequired;
                     db.SaveChanges();
                     MessageBox.Show("Cameristele au fost notificate pentru curățenie!");
                 }

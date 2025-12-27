@@ -23,6 +23,8 @@ namespace HotelManagementSystem.ViewModels
         public RelayCommand ShowEmployeesCommand { get; }
         public RelayCommand ShowFinanceCommand { get; }
 
+        public RelayCommand ShowRoomsCommand { get; }
+
         public AdminViewModel(MainViewModel mainVM)
         {
             _mainVM = mainVM;
@@ -40,6 +42,10 @@ namespace HotelManagementSystem.ViewModels
 
             //Punem sa afisam meniul pentru Finante
             ShowFinanceCommand = new RelayCommand(o => CurrentAdminSection = new FinanceViewModel());
+
+
+            ///Afisare camere
+            ShowRoomsCommand = new RelayCommand(o => CurrentAdminSection = new ReceptionMapViewModel());
         }
-}
+    }
 }
