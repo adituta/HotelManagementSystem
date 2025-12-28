@@ -13,50 +13,29 @@ namespace HotelManagementSystem.ViewModels
 {
     public class ReceptionViewModel : BaseViewModel
     {
-        private ObservableCollection<Reservation> _pendingReservations;
-        public ObservableCollection<Reservation> PendingReservations
+        private object _currentReceptionView;
+        public object CurrentReceptionView
         {
-            get => _pendingReservations;
-            set { _pendingReservations = value; OnPropertyChanged(nameof(PendingReservations)); }
+            get => _currentReceptionView;
+            set { _currentReceptionView = value; OnPropertyChanged(nameof(CurrentReceptionView)); }
         }
 
-        public RelayCommand ConfirmCommand { get; }
+        // Comenzi pentru meniu
+        public RelayCommand ShowMapCommand { get; }
+        public RelayCommand ShowRequestsCommand { get; }
+        public RelayCommand LogoutCommand { get; }
 
         public ReceptionViewModel()
         {
-            LoadPendingReservations();
-            ConfirmCommand = new RelayCommand(res => ExecuteConfirm(res as Reservation));
-        }
+            // Initializam comenzile
+            ShowMapCommand = new RelayCommand(o => CurrentReceptionView = new ReceptionMapViewModel());
+            ShowRequestsCommand = new RelayCommand(o => CurrentReceptionView = new ReceptionConfirmationsViewModel());
 
-        private void LoadPendingReservations()
-        {
-            using (var db = new HotelDBContext())
-            {
-                // Luăm rezervările Pending și includem datele despre Client și Camere
-                var list = db.Reservations
-                    .Include("User")
-                    .Include("Rooms")
-                    .Where(r => r.Status == ReservationStatus.Pending)
-                    .ToList();
-                PendingReservations = new ObservableCollection<Reservation>(list);
-            }
-        }
+            // Logout simplu (nu avem referință la MainVM aici, dar putem face un workaround sau lăsa gol momentan 
+            // Daca vrei logout corect, trebuie sa primesti MainViewModel in constructor ca la Admin)
 
-        private void ExecuteConfirm(Reservation res)
-        {
-            if (res == null) return;
-            using (var db = new HotelDBContext())
-            {
-                var dbRes = db.Reservations.Find(res.Id);
-                if (dbRes != null)
-                {
-                    dbRes.Status = ReservationStatus.Active;
-                    db.SaveChanges();
-                    NotificationService.Send(res.UserId, "Rezervarea dvs. a fost confirmată! Menul de facilități este acum activ.");
-                    MessageBox.Show("Rezervare confirmată! Clientul are acum acces la servicii.");
-                    LoadPendingReservations();
-                }
-            }
+            // Pagina de start: Harta (cea pe care o doreai)
+            CurrentReceptionView = new ReceptionMapViewModel();
         }
     }
 }

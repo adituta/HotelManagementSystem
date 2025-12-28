@@ -12,6 +12,10 @@
     </UserControl.Resources>
 
     <Grid>
+        <TextBlock Text="{Binding StatusMessage}" 
+           Foreground="Red" FontSize="16" FontWeight="Bold" 
+           HorizontalAlignment="Center" Margin="0,10,0,20" TextWrapping="Wrap"/>
+        
         <!-- VARIANTĂ ALBUM: Vizibilă doar dacă NU este în sejur activ -->
         <!-- Am folosit o metodă alternativă: dacă IsSejurActiv e True, acest StackPanel devine ASCUNS (Collapsed) prin Trigger -->
         <StackPanel Margin="20">

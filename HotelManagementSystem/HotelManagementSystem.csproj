@@ -80,6 +80,7 @@
     <Compile Include="Migrations\202512270128123_AddFinalTablesAndNotifications.Designer.cs">
       <DependentUpon>202512270128123_AddFinalTablesAndNotifications.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\HotelDBInitializer.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\ClientDashboardViewModel.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="ViewModels\MakeReservationViewModel.cs" />
     <Compile Include="ViewModels\ManageEmployeesViewModel.cs" />
     <Compile Include="ViewModels\MyReservationsViewModel.cs" />
+    <Compile Include="ViewModels\ReceptionConfirmationsViewModel.cs" />
     <Compile Include="ViewModels\ReceptionMapViewModel.cs" />
     <Compile Include="ViewModels\ReceptionViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
@@ -122,6 +124,9 @@
     </Compile>
     <Compile Include="Views\ManageEmployeesView.xaml.cs">
       <DependentUpon>ManageEmployeesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReceptionConfirmationsView.xaml.cs">
+      <DependentUpon>ReceptionConfirmationsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ReceptionMapView.xaml.cs">
       <DependentUpon>ReceptionMapView.xaml</DependentUpon>
@@ -183,6 +188,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ManageEmployeesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReceptionConfirmationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

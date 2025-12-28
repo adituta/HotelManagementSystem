@@ -15,9 +15,8 @@ namespace HotelManagementSystem.Models
     public class HotelDBContext : DbContext
     {
         public HotelDBContext() : base("name=HotelDBConnectionString") {
-        //Pe masursa ce dezvolt proiecctul si contruiesc baza de date (adaug si sterg tabele)
-        // Adica daca fac modificari in cod, sterge si refa baza de date automat cand pornesc aplicatia.
-        Database.SetInitializer( new DropCreateDatabaseIfModelChanges<HotelDBContext>());
+            //Zona de adaugat date in baza de date
+            Database.SetInitializer(new HotelDbInitializer());
         }
 
 

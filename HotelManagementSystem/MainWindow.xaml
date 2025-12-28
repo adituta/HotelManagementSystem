@@ -65,8 +65,12 @@
         <DataTemplate DataType="{x:Type viewmodels:MakeReservationViewModel}">
             <views:MakeReservationView/>
         </DataTemplate>
-        
-       
+
+        <DataTemplate DataType="{x:Type viewmodels:ReceptionConfirmationsViewModel}">
+            <views:ReceptionConfirmationsView/>
+        </DataTemplate>
+
+
     </Window.Resources>
 
     <Grid>
