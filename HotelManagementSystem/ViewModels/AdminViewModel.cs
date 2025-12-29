@@ -15,15 +15,15 @@ namespace HotelManagementSystem.ViewModels
 
         public object CurrentAdminSection
         {
-            get => _currentAdminSection;
-            set { _currentAdminSection = value; OnPropertyChanged(nameof(CurrentAdminSection)); }
+            get { return _currentAdminSection; }
+            set { _currentAdminSection = value; OnPropertyChanged("CurrentAdminSection"); }
         }
 
-        public RelayCommand LogoutCommand { get; }
-        public RelayCommand ShowEmployeesCommand { get; }
-        public RelayCommand ShowFinanceCommand { get; }
+        public RelayCommand LogoutCommand { get; private set; }
+        public RelayCommand ShowEmployeesCommand { get; private set; }
+        public RelayCommand ShowFinanceCommand { get; private set; }
 
-        public RelayCommand ShowRoomsCommand { get; }
+        public RelayCommand ShowRoomsCommand { get; private set; }
 
         public AdminViewModel(MainViewModel mainVM)
         {

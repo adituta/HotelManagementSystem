@@ -21,26 +21,26 @@ namespace HotelManagementSystem.ViewModels
 
         public string FullName
         {
-            get => _fullName;
+            get { return _fullName; }
             set
             {
                 _fullName = value;
-                OnPropertyChanged(nameof(FullName));
+                OnPropertyChanged("FullName");
             }
         }
 
         public string Username
         {
-            get => _username;
+            get { return _username; }
             set
             {
                 _username = value;
-                OnPropertyChanged(nameof(Username));
+                OnPropertyChanged("Username");
             }
         }
 
-        public RelayCommand RegisterCommand { get; }
-        public RelayCommand BackCommand { get; }
+        public RelayCommand RegisterCommand { get; private set; }
+        public RelayCommand BackCommand { get; private set; }
 
         public RegisterViewModel(MainViewModel mainVM)
         {
@@ -52,7 +52,7 @@ namespace HotelManagementSystem.ViewModels
         private void ExecuteRegister(object parameter)
         {
             var passBox = parameter as PasswordBox;
-            string password = passBox?.Password;
+            string password = (passBox != null) ? passBox.Password : null;
 
             // 1. Validări de bază
             if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(FullName))

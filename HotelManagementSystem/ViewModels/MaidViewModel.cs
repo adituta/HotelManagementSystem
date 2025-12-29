@@ -12,28 +12,33 @@ namespace HotelManagementSystem.ViewModels
 {
     public class MaidViewModel : BaseViewModel
     {
+        private readonly MainViewModel _mainVM;
         private User _currentMaid;
         private ObservableCollection<Room> _assignedRooms;
 
         public ObservableCollection<Room> AssignedRooms
         {
-            get => _assignedRooms;
-            set { _assignedRooms = value; OnPropertyChanged(nameof(AssignedRooms)); }
+            get { return _assignedRooms; }
+            set { _assignedRooms = value; OnPropertyChanged("AssignedRooms"); }
         }
 
-        public int? MyFloor => _currentMaid.AssignedFloor;
+        public int? MyFloor { get { return _currentMaid.AssignedFloor; } }
 
-        public RelayCommand StartCleaningCommand { get; }
-        public RelayCommand FinishCleaningCommand { get; }
+        public RelayCommand StartCleaningCommand { get; private set; }
+        public RelayCommand FinishCleaningCommand { get; private set; }
 
-        public MaidViewModel(User maid)
+        public MaidViewModel(MainViewModel mainVM, User maid)
         {
+            _mainVM = mainVM;
             _currentMaid = maid;
             LoadAssignedRooms();
 
             StartCleaningCommand = new RelayCommand(room => ExecuteUpdateStatus(room as Room, RoomStatus.CleaningInProgress));
-            FinishCleaningCommand = new RelayCommand(room => ExecuteUpdateStatus(room as Room, RoomStatus.Free));
+            FinishCleaningCommand = new RelayCommand(room => ExecuteFinishCleaning(room as Room));
+            LogoutCommand = new RelayCommand(o => _mainVM.CurrentView = new LoginViewModel(_mainVM));
         }
+
+        public RelayCommand LogoutCommand { get; private set; }
 
         private void LoadAssignedRooms()
         {
@@ -61,6 +66,56 @@ namespace HotelManagementSystem.ViewModels
                     dbRoom.Status = newStatus;
                     db.SaveChanges();
                     LoadAssignedRooms(); // Refresh vizual
+                }
+            }
+        }
+
+        private void ExecuteFinishCleaning(Room room)
+        {
+            if (room == null) return;
+
+            using (var db = new HotelDBContext())
+            {
+                var dbRoom = db.Rooms.Find(room.Id);
+                if (dbRoom != null)
+                {
+                    // VERIFICARE CRITICA:
+                    // Daca exista o rezervare ACTIVA care nu expira azi (CheckOutDate > terminarea curateniei),
+                    // atunci camera revine la statusul OCCUPIED (Ocupata), nu FREE.
+                    
+                    DateTime now = DateTime.Now;
+                    
+                    // Cautam o rezervare activa care include aceasta camera
+                    var activeRes = db.Reservations
+                        .Where(r => r.Status == ReservationStatus.Active &&
+                                    r.Rooms.Any(rm => rm.Id == dbRoom.Id) &&
+                                    r.CheckOutDate > now) // Mai are timp de stat
+                        .FirstOrDefault();
+
+                    if (activeRes != null)
+                    {
+                        // E curatenie "de zi cu zi"
+                        dbRoom.Status = RoomStatus.Occupied;
+                    }
+                    else
+                    {
+                        // E curatenie "de check-out" (nu mai e nimeni sau expira azi)
+                        dbRoom.Status = RoomStatus.Free;
+                    }
+
+                    db.SaveChanges();
+                    
+                    // NOTIFICARE CLIENT CURATENIE GATA
+                    int userIdToNotify = 0;
+                     if (activeRes != null) userIdToNotify = activeRes.UserId;
+                     // Daca nu e activeRes, poate luam din history, dar momentan notificam doar daca e cineva cazat.
+                    
+                     if (userIdToNotify > 0)
+                     {
+                         NotificationService.Send(userIdToNotify, $"Camera {dbRoom.RoomNumber} a fost curățată. Mulțumim!");
+                     }
+                    
+                    LoadAssignedRooms();
                 }
             }
         }

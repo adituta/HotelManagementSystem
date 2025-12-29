@@ -16,7 +16,7 @@ namespace HotelManagementSystem.Models
     {
         public HotelDBContext() : base("name=HotelDBConnectionString") {
             //Zona de adaugat date in baza de date
-            Database.SetInitializer(new HotelDbInitializer());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<HotelDBContext, HotelManagementSystem.Migrations.Configuration>());
         }
 
 

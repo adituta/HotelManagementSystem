@@ -20,7 +20,9 @@
             <Button Content="Hartă Camere / Rezervări" Command="{Binding ShowMapCommand}" Style="{StaticResource SidebarButtonStyle}"/>
             <Button Content="Cereri Online (Confirmări)" Command="{Binding ShowRequestsCommand}" Style="{StaticResource SidebarButtonStyle}"/>
 
-            <!-- Buton logout opțional -->
+            <Separator Background="#34495E" Margin="10,20"/>
+            <!-- Buton logout -->
+            <Button Content="Logout" Command="{Binding LogoutCommand}" Background="#E74C3C" Foreground="White" Margin="10"/>
         </StackPanel>
 
         <!-- Zona unde se afișează fie Harta, fie Lista -->

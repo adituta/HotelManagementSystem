@@ -20,12 +20,17 @@ namespace HotelManagementSystem.Models
         public int NrPersons { get; set; } // Adăugat pentru bucătărie
 
         // Relație Many-to-Many simplă (fără tabel de legătură vizibil)
-        public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
+        public virtual ICollection<Room> Rooms { get; set; }
 
         public virtual ICollection<SpaAppointment> SpaAppointments { get; set; }
         public virtual ICollection<FoodOrder> FoodOrders { get; set; }
 
         public string ReviewComment { get; set; }
         public int? ReviewRating { get; set; }
+
+        public Reservation()
+        {
+            Rooms = new List<Room>();
+        }
     }
 }

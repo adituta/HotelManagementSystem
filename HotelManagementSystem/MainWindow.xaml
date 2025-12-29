@@ -58,6 +58,10 @@
             <views:SpaStaffView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type viewmodels:KitchenViewModel}">
+            <views:KitchenView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type viewmodels:FinanceViewModel}">
             <views:FinanceView/>
         </DataTemplate>

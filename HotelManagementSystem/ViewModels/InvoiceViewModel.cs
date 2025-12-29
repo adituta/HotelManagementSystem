@@ -22,16 +22,17 @@ namespace HotelManagementSystem.ViewModels
         public decimal RoomTotal { get; set; }
         public decimal FoodTotal { get; set; }
         public decimal SpaTotal { get; set; }
-        public decimal GrandTotal => RoomTotal + FoodTotal + SpaTotal;
+        public decimal GrandTotal { get { return RoomTotal + FoodTotal + SpaTotal; } }
 
         // Proprietăți pentru Review
         public string ReviewText { get; set; }
-        public int ReviewStars { get; set; } = 5;
+        public int ReviewStars { get; set; }
 
-        public RelayCommand FinishStayCommand { get; }
+        public RelayCommand FinishStayCommand { get; private set; }
 
         public InvoiceViewModel(User client)
         {
+            ReviewStars = 5;
             _client = client;
             LoadInvoiceData();
             FinishStayCommand = new RelayCommand(o => ExecuteFinishStay());

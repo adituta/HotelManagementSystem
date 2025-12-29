@@ -27,7 +27,8 @@ namespace HotelManagementSystem.Views
 
         private void ReceptionMapView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (this.DataContext is ReceptionMapViewModel vm)
+            var vm = this.DataContext as ReceptionMapViewModel;
+            if (vm != null)
             {
                 // Ne abonăm la evenimentul din ViewModel
                 vm.OnScheduleLoaded += UpdateCalendarBlackouts;

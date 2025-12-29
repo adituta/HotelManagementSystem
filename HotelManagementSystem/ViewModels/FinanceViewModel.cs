@@ -12,7 +12,7 @@ namespace HotelManagementSystem.ViewModels
         // Proprietăți pentru UI
         public decimal TotalIncome { get; set; }
         public decimal TotalExpenses { get; set; }
-        public decimal TotalProfit => TotalIncome - TotalExpenses;
+        public decimal TotalProfit { get { return TotalIncome - TotalExpenses; } }
 
         public int TotalReservationsCount { get; set; }
         public int TotalMealsServed { get; set; }
@@ -31,8 +31,10 @@ namespace HotelManagementSystem.ViewModels
                 decimal roomIncome = db.Reservations.Where(r => r.Status != Enums.ReservationStatus.Cancelled)
                                        .Sum(r => (decimal?)r.TotalPrice) ?? 0;
 
-                // B. Din mâncare (prețul plătit de clienți)
-                decimal foodIncome = db.FoodOrders.Sum(f => (decimal?)f.Cost) ?? 0;
+                // B. Din mâncare (prețul plătit de clienți - DOAR CELE SERVITE)
+                decimal foodIncome = db.FoodOrders
+                                    .Where(f => f.Status == Enums.OrderStatus.Served)
+                                    .Sum(f => (decimal?)f.Cost) ?? 0;
 
                 // C. Din SPA (prețul serviciilor)
                 decimal spaIncome = db.SpaAppointments.Sum(s => (decimal?)s.SpaService.PricePerPerson * s.PersonsCount) ?? 0;
@@ -40,8 +42,10 @@ namespace HotelManagementSystem.ViewModels
                 TotalIncome = roomIncome + foodIncome + spaIncome;
 
                 // 2. CHELTUIELI
-                // A. Costul alimentelor (InternalCost din MenuItem)
-                decimal foodExpenses = db.FoodOrders.Sum(f => (decimal?)f.MenuItem.InternalCost) ?? 0;
+                // A. Costul alimentelor (InternalCost din MenuItem - DOAR CELE SERVITE)
+                decimal foodExpenses = db.FoodOrders
+                                      .Where(f => f.Status == Enums.OrderStatus.Served)
+                                      .Sum(f => (decimal?)f.MenuItem.InternalCost) ?? 0;
 
                 // B. Salariile personalului SPA (Ore prestate * Salariu/Oră)
                 // Presupunem că 1 appointment = 1 oră muncită

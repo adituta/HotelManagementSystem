@@ -16,11 +16,11 @@ namespace HotelManagementSystem.ViewModels
         private ObservableCollection<Reservation> _pendingReservations;
         public ObservableCollection<Reservation> PendingReservations
         {
-            get => _pendingReservations;
-            set { _pendingReservations = value; OnPropertyChanged(nameof(PendingReservations)); }
+            get { return _pendingReservations; }
+            set { _pendingReservations = value; OnPropertyChanged("PendingReservations"); }
         }
 
-        public RelayCommand ConfirmCommand { get; }
+        public RelayCommand ConfirmCommand { get; private set; }
 
         public ReceptionConfirmationsViewModel()
         {

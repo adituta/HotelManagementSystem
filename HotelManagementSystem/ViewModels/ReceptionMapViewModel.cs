@@ -19,29 +19,29 @@ namespace HotelManagementSystem.ViewModels
         private Room _selectedRoom;
         public Room SelectedRoom
         {
-            get => _selectedRoom;
+            get { return _selectedRoom; }
             set
             {
                 _selectedRoom = value;
-                OnPropertyChanged(nameof(SelectedRoom));
-                OnPropertyChanged(nameof(IsRoomSelected));
+                OnPropertyChanged("SelectedRoom");
+                OnPropertyChanged("IsRoomSelected");
 
                 // Când selectăm o cameră, încărcăm calendarul ei
                 if (_selectedRoom != null) LoadRoomSchedule(_selectedRoom.Id);
             }
         }
 
-        public bool IsRoomSelected => SelectedRoom != null;
+        public bool IsRoomSelected { get { return SelectedRoom != null; } }
 
         // Selecție client existent
         private User _selectedClient;
         public User SelectedClient
         {
-            get => _selectedClient;
+            get { return _selectedClient; }
             set
             {
                 _selectedClient = value;
-                OnPropertyChanged(nameof(SelectedClient));
+                OnPropertyChanged("SelectedClient");
                 // Dacă selectăm un client existent, ștergem câmpurile de client nou
                 if (value != null) IsNewClientMode = false;
             }
@@ -51,11 +51,11 @@ namespace HotelManagementSystem.ViewModels
         private bool _isNewClientMode;
         public bool IsNewClientMode
         {
-            get => _isNewClientMode;
+            get { return _isNewClientMode; }
             set
             {
                 _isNewClientMode = value;
-                OnPropertyChanged(nameof(IsNewClientMode));
+                OnPropertyChanged("IsNewClientMode");
                 if (value) SelectedClient = null; // Deselectăm clientul existent
             }
         }
@@ -64,8 +64,8 @@ namespace HotelManagementSystem.ViewModels
         public string NewClientPhone { get; set; } // Folosit ca username temporar
 
         // Date calendaristice
-        public DateTime StartDate { get; set; } = DateTime.Today;
-        public DateTime EndDate { get; set; } = DateTime.Today.AddDays(1);
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         // --- LISTA DE DATE OCUPATE (Pentru Calendar) ---
         // Vom trimite această listă către View pentru a bloca datele
@@ -74,17 +74,24 @@ namespace HotelManagementSystem.ViewModels
         // Eveniment pentru a notifica View-ul să redeseneze calendarul
         public event Action<List<Reservation>> OnScheduleLoaded;
 
-        public RelayCommand BookOnSpotCommand { get; }
-        public RelayCommand SetRoomCommand { get; }
+        public RelayCommand BookOnSpotCommand { get; private set; }
+        public RelayCommand SetRoomCommand { get; private set; }
+        public RelayCommand RefreshCommand { get; private set; }
 
         public ReceptionMapViewModel()
         {
+            StartDate = DateTime.Today;
+            EndDate = DateTime.Today.AddDays(1);
+
+            LoadData();
             LoadData();
             BookOnSpotCommand = new RelayCommand(o => ExecuteBookOnSpot());
+            RefreshCommand = new RelayCommand(o => LoadData());
 
             SetRoomCommand = new RelayCommand(obj =>
             {
-                if (obj is Room r)
+                var r = obj as Room;
+                if (r != null)
                 {
                     SelectedRoom = r;
                 }
@@ -130,8 +137,8 @@ namespace HotelManagementSystem.ViewModels
                 AllClients = new ObservableCollection<User>(db.Users.Where(u => u.Role == UserRole.Client).ToList());
 
                 // Notificăm UI-ul
-                OnPropertyChanged(nameof(AllRooms));
-                OnPropertyChanged(nameof(AllClients));
+                OnPropertyChanged("AllRooms");
+                OnPropertyChanged("AllClients");
             }
         }
 
@@ -147,7 +154,8 @@ namespace HotelManagementSystem.ViewModels
                     .ToList();
 
                 // Declanșăm evenimentul pentru ca View-ul (Code Behind) să actualizeze Calendarul grafic
-                OnScheduleLoaded?.Invoke(RoomFutureReservations);
+                var handler = OnScheduleLoaded;
+                if (handler != null) handler(RoomFutureReservations);
             }
         }
 
@@ -241,7 +249,7 @@ namespace HotelManagementSystem.ViewModels
                 db.Reservations.Add(newRes);
                 db.SaveChanges();
 
-                MessageBox.Show($"Rezervare efectuată cu succes pentru camera {SelectedRoom.RoomNumber}!");
+                MessageBox.Show(string.Format("Rezervare efectuată cu succes pentru camera {0}!", SelectedRoom.RoomNumber));
 
                 // Refresh Calendar și Grid
                 LoadData();

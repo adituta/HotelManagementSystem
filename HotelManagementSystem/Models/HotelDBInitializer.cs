@@ -42,7 +42,7 @@ namespace HotelManagementSystem.Models
                 {
                     rooms.Add(new Room
                     {
-                        RoomNumber = $"{floor}{r:00}",
+                        RoomNumber = string.Format("{0}{1:00}", floor, r),
                         Floor = floor,
                         Type = (r > 8) ? RoomType.Triple : RoomType.Double,
                         PricePerNight = 220,

@@ -17,6 +17,12 @@
 
         protected override void Seed(HotelManagementSystem.Models.HotelDBContext context)
         {
+            // Check if database is already seeded to prevent wiping user data and crashing
+            if (context.Users.Any())
+            {
+                return;
+            }
+
             // ---------------------------------------------------------
             // 1. CURĂȚARE BAZĂ DE DATE (Stergere in ordine inversa a dependentelor)
             // ---------------------------------------------------------
@@ -24,6 +30,11 @@
             context.Database.ExecuteSqlCommand("DELETE FROM FoodOrders");
             context.Database.ExecuteSqlCommand("DELETE FROM SpaAppointments");
             context.Database.ExecuteSqlCommand("DELETE FROM ReservationRooms");
+            
+            // Fix FK constraint issue: Update Rooms to remove reference to Reservations before deleting Reservations
+            // The error was: DELETE statement conflicted with REFERENCE constraint "FK_dbo.Rooms_dbo.Reservations_Reservation_Id"
+            context.Database.ExecuteSqlCommand("UPDATE Rooms SET Reservation_Id = NULL");
+            
             context.Database.ExecuteSqlCommand("DELETE FROM Reservations");
             context.Database.ExecuteSqlCommand("DELETE FROM Rooms");
             context.Database.ExecuteSqlCommand("DELETE FROM Users");
@@ -76,7 +87,7 @@
             {
                 for (int roomNum = 1; roomNum <= 10; roomNum++)
                 {
-                    string rNumber = $"{floor}{roomNum:00}"; // ex: 101, 205
+                    string rNumber = string.Format("{0}{1:00}", floor, roomNum); // ex: 101, 205
                     var rType = (roomNum > 8) ? RoomType.Triple : RoomType.Double;
                     decimal price = (floor == 5) ? 350 : (rType == RoomType.Double ? 200 : 280); // Etaj 5 e VIP
 

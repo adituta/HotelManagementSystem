@@ -23,37 +23,38 @@ namespace HotelManagementSystem.ViewModels
 
         public object CurrentClientSection
         {
-            get => _currentClientSection;
-            set { _currentClientSection = value; OnPropertyChanged(nameof(CurrentClientSection)); }
+            get { return _currentClientSection; }
+            set { _currentClientSection = value; OnPropertyChanged("CurrentClientSection"); }
         }
 
-        public RelayCommand LogoutCommand { get; }
-        public RelayCommand ShowMakeReservationCommand { get; }
-        public RelayCommand ShowMyReservationsCommand { get; }
+        public RelayCommand LogoutCommand { get; private set; }
+        public RelayCommand ShowMakeReservationCommand { get; private set; }
+        public RelayCommand ShowMyReservationsCommand { get; private set; }
 
-        public RelayCommand ShowFacilitiesCommand { get; }
+        public RelayCommand ShowFacilitiesCommand { get; private set; }
 
-        public RelayCommand ShowInvoiceCommand { get; }
+        public RelayCommand ShowInvoiceCommand { get; private set; }
 
-        public List<Reservation> AllMyReservations { get; set; } = new List<Reservation>();
+        public List<Reservation> AllMyReservations { get; set; }
 
         // Rezervări Viitoare/Active
-        public List<Reservation> UpcomingReservations => AllMyReservations.Where(r => r.Status != ReservationStatus.Completed).ToList();
+        public List<Reservation> UpcomingReservations { get { return AllMyReservations.Where(r => r.Status != ReservationStatus.Completed).ToList(); } }
 
         // Istoric (Terminat)
-        public List<Reservation> PastReservations => AllMyReservations.Where(r => r.Status == ReservationStatus.Completed).ToList();
+        public List<Reservation> PastReservations { get { return AllMyReservations.Where(r => r.Status == ReservationStatus.Completed).ToList(); } }
 
 
         private ObservableCollection<Reservation> _allMyReservations;
         public ObservableCollection<Reservation> AllMyReservationsObservable
         {
-            get => _allMyReservations;
-            set { _allMyReservations = value; OnPropertyChanged(nameof(AllMyReservations)); }
+            get { return _allMyReservations; }
+            set { _allMyReservations = value; OnPropertyChanged("AllMyReservations"); }
         }
 
-        public RelayCommand ShowNotificationsCommand { get; }
+        public RelayCommand ShowNotificationsCommand { get; private set; }
         public ClientDashboardViewModel(MainViewModel mainVM, User user)
         {
+            AllMyReservations = new List<Reservation>();
             _mainVM = mainVM;
             _loggedUser = user;
 
@@ -74,7 +75,10 @@ namespace HotelManagementSystem.ViewModels
             });
 
             //afisare notificari
-            ShowNotificationsCommand = new RelayCommand(o => System.Windows.MessageBox.Show("Nu aveți notificări noi."));
+            ShowNotificationsCommand = new RelayCommand(o => 
+            {
+                CurrentClientSection = new NotificationsViewModel(_loggedUser);
+            });
 
             // Pagina implicită
             CurrentClientSection = new MakeReservationViewModel(_loggedUser);

@@ -19,6 +19,6 @@ namespace HotelManagementSystem.Models
         public string MealType { get; set; } //Mic dejun, pranz, cina
         public string FoodDetails { get; set; } //detalii despre mancare (2 X Ciorba, 3 x friptura etc)
         public decimal Cost { get; set; }
-
+        public Enums.OrderStatus Status { get; set; }
     }
 }

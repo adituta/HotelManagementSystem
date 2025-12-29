@@ -12,9 +12,9 @@ namespace HotelManagementSystem.ViewModels
         private object _currentView;
         public object CurrentView
         {
-            get => _currentView;
+            get { return _currentView; }
             set { _currentView = value;
-                OnPropertyChanged(nameof(CurrentView));
+                OnPropertyChanged("CurrentView");
             }
         }
 

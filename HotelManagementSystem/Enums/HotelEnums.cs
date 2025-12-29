@@ -38,9 +38,19 @@ namespace HotelManagementSystem.Enums
         Cancelled = 4
     }
 
+
     public enum ServiceType
     {
         Sauna=1,
         Massage=2
+    }
+
+    public enum OrderStatus
+    {
+        Pending = 1,
+        Accepted = 2,
+        Cooking = 3,
+        Served = 4,
+        Cancelled = 5
     }
 }

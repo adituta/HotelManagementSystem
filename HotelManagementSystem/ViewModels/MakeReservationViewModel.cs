@@ -18,31 +18,34 @@ namespace HotelManagementSystem.ViewModels
         private RoomType _selectedRoomType;
         public RoomType SelectedRoomType
         {
-            get => _selectedRoomType;
+            get { return _selectedRoomType; }
             set
             {
                 _selectedRoomType = value;
-                OnPropertyChanged(nameof(SelectedRoomType));
+                OnPropertyChanged("SelectedRoomType");
             }
         }
-        public DateTime StartDate { get; set; } = DateTime.Now;
-        public DateTime EndDate { get; set; } = DateTime.Now.AddDays(1);
-        public int NrPersons { get; set; } = 1;
-        public List<RoomType> RoomTypes => Enum.GetValues(typeof(RoomType)).Cast<RoomType>().ToList();
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int NrPersons { get; set; }
+        public List<RoomType> RoomTypes { get { return Enum.GetValues(typeof(RoomType)).Cast<RoomType>().ToList(); } }
 
         private ObservableCollection<Room> _availableRooms;
         public ObservableCollection<Room> AvailableRooms
         {
-            get => _availableRooms;
-            set { _availableRooms = value; OnPropertyChanged(nameof(AvailableRooms)); }
+            get { return _availableRooms; }
+            set { _availableRooms = value; OnPropertyChanged("AvailableRooms"); }
         }
 
-        public RelayCommand SearchCommand { get; }
-        public RelayCommand BookCommand { get; }
+        public RelayCommand SearchCommand { get; private set; }
+        public RelayCommand BookCommand { get; private set; }
         private User _client;
 
         public MakeReservationViewModel(User client)
         {
+            StartDate = DateTime.Now;
+            EndDate = DateTime.Now.AddDays(1);
+            NrPersons = 1;
             _client = client;
             SearchCommand = new RelayCommand(o => ExecuteSearch());
             BookCommand = new RelayCommand(room => ExecuteBook(room as Room));

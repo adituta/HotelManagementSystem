@@ -3,6 +3,7 @@ using HotelManagementSystem.Models;
 using HotelManagementSystem.Enums;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Data.Entity;
@@ -18,37 +19,40 @@ namespace HotelManagementSystem.ViewModels
         private bool _isSejurActiv;
         public bool IsSejurActiv
         {
-            get => _isSejurActiv;
-            set { _isSejurActiv = value; OnPropertyChanged(nameof(IsSejurActiv)); }
+            get { return _isSejurActiv; }
+            set { _isSejurActiv = value; OnPropertyChanged("IsSejurActiv"); }
         }
 
         // Mesaj explicativ pentru utilizator când meniul e blocat
         private string _statusMessage;
         public string StatusMessage
         {
-            get => _statusMessage;
-            set { _statusMessage = value; OnPropertyChanged(nameof(StatusMessage)); }
+            get { return _statusMessage; }
+            set { _statusMessage = value; OnPropertyChanged("StatusMessage"); }
         }
 
         // Liste UI
         public List<MenuItem> LunchMenu { get; set; }
         public List<MenuItem> DinnerMenu { get; set; }
         public List<SpaService> SpaServices { get; set; }
-        public List<int> TimeSlots { get; } = new List<int> { 10, 11, 12, 14, 15, 16 };
+        // Folosim o clasă ajutătoare pentru a afișa disponibilitatea
+        public ObservableCollection<TimeSlotDto> TimeSlots { get; private set; }
 
         // Selecții
         public MenuItem SelectedLunch { get; set; }
         public MenuItem SelectedDinner { get; set; }
         public SpaService SelectedSpaService { get; set; }
         public int SelectedSlot { get; set; }
-        public int SpaPersonsCount { get; set; } = 1;
+        public int SpaPersonsCount { get; set; }
 
-        public RelayCommand OrderFoodCommand { get; }
-        public RelayCommand BookSpaCommand { get; }
-        public RelayCommand RequestCleaningCommand { get; }
+        public RelayCommand OrderFoodCommand { get; private set; }
+        public RelayCommand BookSpaCommand { get; private set; }
+        public RelayCommand RequestCleaningCommand { get; private set; }
 
         public FacilitiesViewModel(User client)
         {
+            TimeSlots = new ObservableCollection<TimeSlotDto>();
+            SpaPersonsCount = 1;
             _client = client;
             LoadActiveData(); // Aici e logica nouă
 
@@ -99,14 +103,15 @@ namespace HotelManagementSystem.ViewModels
                         DinnerMenu = db.MenuItems.Where(m => m.Category == "Dinner").ToList();
                         SpaServices = db.SpaServices.ToList();
 
-                        OnPropertyChanged(nameof(LunchMenu));
-                        OnPropertyChanged(nameof(DinnerMenu));
-                        OnPropertyChanged(nameof(SpaServices));
+                        OnPropertyChanged("DinnerMenu");
+                        OnPropertyChanged("SpaServices");
+                        
+                        LoadSlotsAvailability(); // Calculăm locurile libere
                     }
                     else if (now < accessStart)
                     {
                         // E ziua sosirii, dar e înainte de ora 12:00
-                        StatusMessage = $"Accesul la servicii începe la ora 12:00. (Ora curentă: {now:HH:mm})";
+                        StatusMessage = string.Format("Accesul la servicii începe la ora 12:00. (Ora curentă: {0:HH:mm})", now);
                     }
                     else if (now >= accessEnd)
                     {
@@ -115,6 +120,35 @@ namespace HotelManagementSystem.ViewModels
                     }
                 }
             }
+        }
+
+        private void LoadSlotsAvailability()
+        {
+            TimeSlots.Clear();
+            var hours = new List<int> { 10, 11, 12, 14, 15, 16 };
+
+            using (var db = new HotelDBContext())
+            {
+                foreach (var h in hours)
+                {
+                    // Calculăm câți sunt deja programați la ora h azi (Inclusiv Pending!)
+                    int occupied = db.SpaAppointments
+                        .Where(a => a.AppointmentDate == DateTime.Today && a.StartTime.Hours == h) // Removed IsConfirmed
+                        .Sum(a => (int?)a.PersonsCount) ?? 0;
+
+                    int maxCapacity = 6;
+                    int free = maxCapacity - occupied;
+                    if (free < 0) free = 0;
+
+                    TimeSlots.Add(new TimeSlotDto 
+                    { 
+                        Hour = h, 
+                        Display = $"{h}:00  ({free} locuri libere)",
+                        IsFull = free == 0
+                    });
+                }
+            }
+            OnPropertyChanged("TimeSlots");
         }
 
         private void ExecuteBookSpa()
@@ -128,15 +162,19 @@ namespace HotelManagementSystem.ViewModels
 
             using (var db = new HotelDBContext())
             {
+                // STANDARD: Capacitate fixă de 6 persoane pe oră, indiferent de serviciu
+                int maxCapacity = 6;
+
+                // Calculăm ocuparea incluzând și cererile neconfirmate (Pending) pentru a evita overbooking-ul
                 int occupied = db.SpaAppointments
                     .Where(a => a.AppointmentDate == DateTime.Today && a.StartTime.Hours == SelectedSlot)
                     .Sum(a => (int?)a.PersonsCount) ?? 0;
 
-                int available = SelectedSpaService.MaxCapacityPerSlot - occupied;
+                int available = maxCapacity - occupied;
 
                 if (SpaPersonsCount > available)
                 {
-                    MessageBox.Show($"Locuri insuficiente! Mai sunt doar {available} locuri libere.");
+                    MessageBox.Show(string.Format("Locuri insuficiente! Mai sunt doar {0} locuri libere.", available));
                     return;
                 }
 
@@ -150,6 +188,10 @@ namespace HotelManagementSystem.ViewModels
                     IsConfirmed = false
                 });
                 db.SaveChanges();
+                
+                // NOTIFICARE CERERE SPA
+                NotificationService.Send(_client.Id, $"Rezervarea SPA pentru data {DateTime.Today.ToShortDateString()} la ora {SelectedSlot}:00 a fost trimisă.");
+                
                 MessageBox.Show("Programare SPA trimisă!");
             }
         }
@@ -174,7 +216,8 @@ namespace HotelManagementSystem.ViewModels
                         OrderDate = DateTime.Now,
                         MealType = "Lunch",
                         FoodDetails = SelectedLunch.Name,
-                        Cost = SelectedLunch.Price
+                        Cost = SelectedLunch.Price,
+                        Status = OrderStatus.Pending
                     });
                 }
                 if (SelectedDinner != null)
@@ -186,7 +229,8 @@ namespace HotelManagementSystem.ViewModels
                         OrderDate = DateTime.Now,
                         MealType = "Dinner",
                         FoodDetails = SelectedDinner.Name,
-                        Cost = SelectedDinner.Price
+                        Cost = SelectedDinner.Price,
+                        Status = OrderStatus.Pending
                     });
                 }
                 db.SaveChanges();
@@ -206,8 +250,19 @@ namespace HotelManagementSystem.ViewModels
                     if (dbRoom != null) dbRoom.Status = RoomStatus.CleaningRequired;
                 }
                 db.SaveChanges();
+                
+                // NOTIFICARE CERERE CURATENIE
+                NotificationService.Send(_client.Id, "Solicitarea de curățenie a fost transmisă cameristei.");
+
                 MessageBox.Show("Camerista notificată!");
             }
         }
+    }
+
+    public class TimeSlotDto
+    {
+        public int Hour { get; set; }
+        public string Display { get; set; }
+        public bool IsFull { get; set; }
     }
 }

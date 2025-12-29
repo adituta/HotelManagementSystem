@@ -25,7 +25,11 @@
                         <Rectangle Width="15" Height="15" Fill="#E74C3C" Margin="0,0,5,0"/>
                         <TextBlock Text="Ocupat Astăzi " Margin="0,0,15,0"/>
                         <Rectangle Width="15" Height="15" Fill="#F1C40F" Margin="0,0,5,0"/>
-                        <TextBlock Text="Curățenie "/>
+                        <TextBlock Text="Curățenie " Margin="0,0,20,0"/>
+
+                        <!-- Buton Refresh -->
+                        <Button Content="⟳ Actualizează" Command="{Binding RefreshCommand}" 
+                                Background="Transparent" BorderThickness="0" Foreground="#2980B9" Cursor="Hand" FontWeight="Bold"/>
                     </StackPanel>
 
                     <ItemsControl ItemsSource="{Binding AllRooms}">

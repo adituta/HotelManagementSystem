@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch HotelManagementSystem",
+            "type": "clr",
+            "request": "launch",
+            "program": "${workspaceFolder}/HotelManagementSystem/bin/Debug/HotelManagementSystem.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/HotelManagementSystem",
+            "stopAtEntry": false,
+            "console": "externalTerminal",
+            "preLaunchTask": "build"
+        }
+    ]
+}

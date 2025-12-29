@@ -4,9 +4,25 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HotelManagementSystem.Views"
+             xmlns:vm="clr-namespace:HotelManagementSystem.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="#F0F2F5">
+        <Grid.Resources>
+            <DataTemplate DataType="{x:Type vm:MakeReservationViewModel}">
+                <local:MakeReservationView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:FacilitiesViewModel}">
+                <local:FacilitiesView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:InvoiceViewModel}">
+                <local:InvoiceView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NotificationsViewModel}">
+                <local:NotificationsView/>
+            </DataTemplate>
+        </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220"/>
             <!-- Sidebar -->
@@ -14,8 +30,20 @@
             <!-- Content -->
         </Grid.ColumnDefinitions>
 
-        <!-- Sidebar Client -->
+            <!-- Sidebar Client -->
         <StackPanel Grid.Column="0" Background="#34495E">
+            <StackPanel.Resources>
+                <Style TargetType="Button" x:Key="SidebarButtonStyle">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="Margin" Value="0,5"/>
+                    <Setter Property="Padding" Value="10"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                </Style>
+            </StackPanel.Resources>
+            
             <TextBlock Text="MENIU CLIENT" Foreground="White" FontSize="18" FontWeight="Bold" Margin="20,30" HorizontalAlignment="Center"/>
 
             <Button Content="Rezervare Nouă" Command="{Binding ShowMakeReservationCommand}" Style="{StaticResource SidebarButtonStyle}"/>

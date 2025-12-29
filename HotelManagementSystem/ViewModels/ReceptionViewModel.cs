@@ -13,28 +13,30 @@ namespace HotelManagementSystem.ViewModels
 {
     public class ReceptionViewModel : BaseViewModel
     {
+        private readonly MainViewModel _mainVM;
         private object _currentReceptionView;
+
         public object CurrentReceptionView
         {
-            get => _currentReceptionView;
-            set { _currentReceptionView = value; OnPropertyChanged(nameof(CurrentReceptionView)); }
+            get { return _currentReceptionView; }
+            set { _currentReceptionView = value; OnPropertyChanged("CurrentReceptionView"); }
         }
 
         // Comenzi pentru meniu
-        public RelayCommand ShowMapCommand { get; }
-        public RelayCommand ShowRequestsCommand { get; }
-        public RelayCommand LogoutCommand { get; }
+        public RelayCommand ShowMapCommand { get; private set; }
+        public RelayCommand ShowRequestsCommand { get; private set; }
+        public RelayCommand LogoutCommand { get; private set; }
 
-        public ReceptionViewModel()
+        public ReceptionViewModel(MainViewModel mainVM)
         {
+            _mainVM = mainVM;
+
             // Initializam comenzile
             ShowMapCommand = new RelayCommand(o => CurrentReceptionView = new ReceptionMapViewModel());
             ShowRequestsCommand = new RelayCommand(o => CurrentReceptionView = new ReceptionConfirmationsViewModel());
+            LogoutCommand = new RelayCommand(o => _mainVM.CurrentView = new LoginViewModel(_mainVM));
 
-            // Logout simplu (nu avem referință la MainVM aici, dar putem face un workaround sau lăsa gol momentan 
-            // Daca vrei logout corect, trebuie sa primesti MainViewModel in constructor ca la Admin)
-
-            // Pagina de start: Harta (cea pe care o doreai)
+            // Pagina de start: Harta
             CurrentReceptionView = new ReceptionMapViewModel();
         }
     }

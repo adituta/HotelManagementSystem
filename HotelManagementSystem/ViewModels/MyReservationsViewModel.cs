@@ -13,7 +13,7 @@ namespace HotelManagementSystem.ViewModels
     public class MyReservationsViewModel : BaseViewModel
     {
         public ObservableCollection<Reservation> PastReservations { get; set; }
-        public RelayCommand ViewInvoiceCommand { get; }
+        public RelayCommand ViewInvoiceCommand { get; private set; }
         private MainViewModel _main;
         private User _user;
 

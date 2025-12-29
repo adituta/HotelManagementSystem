@@ -18,19 +18,19 @@ namespace HotelManagementSystem.ViewModels
 
         public ObservableCollection<User> EmployeesList
         {
-            get => _employeesList;
-            set { _employeesList = value; OnPropertyChanged(nameof(EmployeesList)); }
+            get { return _employeesList; }
+            set { _employeesList = value; OnPropertyChanged("EmployeesList"); }
         }
 
         public User NewUser
         {
-            get => _newUser;
-            set { _newUser = value; OnPropertyChanged(nameof(NewUser)); }
+            get { return _newUser; }
+            set { _newUser = value; OnPropertyChanged("NewUser"); }
         }
 
-        public List<UserRole> RoleTypes => Enum.GetValues(typeof(UserRole)).Cast<UserRole>().ToList();
+        public List<UserRole> RoleTypes { get { return Enum.GetValues(typeof(UserRole)).Cast<UserRole>().ToList(); } }
 
-        public RelayCommand SaveEmployeeCommand { get; }
+        public RelayCommand SaveEmployeeCommand { get; private set; }
 
         public ManageEmployeesViewModel()
         {

@@ -1,0 +1,44 @@
+<UserControl x:Class="HotelManagementSystem.Views.NotificationsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Notificările Mele" FontSize="24" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,20"/>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding MyNotifications}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="White" CornerRadius="8" Margin="0,5,20,5" Padding="15">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#BDC3C7" Direction="270" ShadowDepth="2" Opacity="0.3" BlurRadius="5"/>
+                            </Border.Effect>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- Icon / Indicator -->
+                                <Border Grid.Column="0" Width="4" Background="#3498DB" CornerRadius="2" Margin="0,0,15,0"/>
+                                
+                                <!-- Content -->
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding CreatedAt, StringFormat='{}{0:dd MMM yyyy, ora HH:mm}'}" 
+                                               Foreground="#95A5A6" FontSize="11" Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding Message}" 
+                                               Foreground="#2C3E50" FontSize="14" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
