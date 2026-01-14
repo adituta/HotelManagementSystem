@@ -153,10 +153,10 @@ namespace HotelManagementSystem.ViewModels
 
         private void ExecuteBookSpa()
         {
-            if (!IsSejurActiv) { MessageBox.Show(StatusMessage); return; }
+            if (!IsSejurActiv) { MessageBoxHelper.Show(StatusMessage, "Info"); return; }
             if (SelectedSpaService == null || SelectedSlot == 0)
             {
-                MessageBox.Show("Selectați serviciul și ora!");
+                MessageBoxHelper.Show("Selectați serviciul și ora!", "Eroare");
                 return;
             }
 
@@ -174,7 +174,7 @@ namespace HotelManagementSystem.ViewModels
 
                 if (SpaPersonsCount > available)
                 {
-                    MessageBox.Show(string.Format("Locuri insuficiente! Mai sunt doar {0} locuri libere.", available));
+                    MessageBoxHelper.Show(string.Format("Locuri insuficiente! Mai sunt doar {0} locuri libere.", available), "Info");
                     return;
                 }
 
@@ -192,16 +192,16 @@ namespace HotelManagementSystem.ViewModels
                 // NOTIFICARE CERERE SPA
                 NotificationService.Send(_client.Id, $"Rezervarea SPA pentru data {DateTime.Today.ToShortDateString()} la ora {SelectedSlot}:00 a fost trimisă.");
                 
-                MessageBox.Show("Programare SPA trimisă!");
+                MessageBoxHelper.Show("Programare SPA trimisă!", "Succes");
             }
         }
 
         private void ExecuteOrderFood()
         {
-            if (!IsSejurActiv) { MessageBox.Show(StatusMessage); return; }
+            if (!IsSejurActiv) { MessageBoxHelper.Show(StatusMessage, "Info"); return; }
             if (SelectedLunch == null && SelectedDinner == null)
             {
-                MessageBox.Show("Selectați mâncarea.");
+                MessageBoxHelper.Show("Selectați mâncarea.", "Info");
                 return;
             }
 
@@ -235,13 +235,13 @@ namespace HotelManagementSystem.ViewModels
                 }
                 db.SaveChanges();
                 NotificationService.Send(_client.Id, "Comanda trimisă la bucătărie!");
-                MessageBox.Show("Comandă plasată!");
+                MessageBoxHelper.Show("Comandă plasată!", "Succes");
             }
         }
 
         private void ExecuteRequestCleaning()
         {
-            if (!IsSejurActiv) { MessageBox.Show(StatusMessage); return; }
+            if (!IsSejurActiv) { MessageBoxHelper.Show(StatusMessage, "Info"); return; }
             using (var db = new HotelDBContext())
             {
                 foreach (var room in _activeReservation.Rooms)
@@ -254,7 +254,7 @@ namespace HotelManagementSystem.ViewModels
                 // NOTIFICARE CERERE CURATENIE
                 NotificationService.Send(_client.Id, "Solicitarea de curățenie a fost transmisă cameristei.");
 
-                MessageBox.Show("Camerista notificată!");
+                MessageBoxHelper.Show("Camerista notificată!", "Succes");
             }
         }
     }

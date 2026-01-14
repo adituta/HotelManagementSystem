@@ -4,31 +4,103 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             Background="White">
-
+             d:DesignHeight="600" d:DesignWidth="900">
+    
     <Grid>
-        <!-- Aici pui codul de design -->
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">
-            <TextBlock Text="Sistem Management Hotel" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+        <!-- Gradient Background -->
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#2C3E50" Offset="0.0"/>
+                <GradientStop Color="#4CA1AF" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Grid.Background>
 
-            <TextBlock Text="Utilizator:"/>
-            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,5" Height="25"/>
+        <!-- Login Card -->
+        <Border Background="White" CornerRadius="15" Width="380" Height="500" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" ShadowDepth="10" Opacity="0.3" Color="Black"/>
+            </Border.Effect>
+            
+            <StackPanel Margin="40">
+                <!-- Branding -->
+                <TextBlock Text="Welcome Back" FontSize="28" FontWeight="Bold" Foreground="#2C3E50" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock Text="Hotel Management System" FontSize="14" Foreground="#7F8C8D" HorizontalAlignment="Center" Margin="0,0,0,40"/>
 
-            <TextBlock Text="Parolă:" Margin="0,10,0,0"/>
-            <!-- PasswordBox nu suportă binding direct din motive de securitate, 
-                 îl vom gestiona în ViewModel sau folosind un Helper ulterior -->
-            <PasswordBox x:Name="PasswordInput" Margin="0,5" Height="25"/>
+                <!-- Username Input -->
+                <TextBlock Text="Utilizator" Foreground="#34495E" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <Border CornerRadius="8" Background="#F0F2F5" BorderBrush="Transparent" BorderThickness="1" Height="45" Margin="0,0,0,20">
+                    <Grid>
+                        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="Transparent" BorderThickness="0" 
+                                 VerticalContentAlignment="Center" Padding="10" FontSize="14"
+                                 Validation.ErrorTemplate="{x:Null}"/>
+                    </Grid>
+                </Border>
 
-            <Button Content="Autentificare" 
-                    Command="{Binding LoginCommand}" 
-                    CommandParameter="{Binding ElementName=PasswordInput}"
-                    Margin="0,20,0,0" Height="35" Cursor="Hand"/>
+                <!-- Password Input -->
+                <TextBlock Text="Parolă" Foreground="#34495E" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <Border CornerRadius="8" Background="#F0F2F5" BorderBrush="Transparent" BorderThickness="1" Height="45" Margin="0,0,0,30">
+                    <Grid>
+                        <PasswordBox x:Name="PasswordInput" 
+                                     Background="Transparent" BorderThickness="0" 
+                                     VerticalContentAlignment="Center" Padding="10" FontSize="14"/>
+                    </Grid>
+                </Border>
 
-            <Button Content="Înregistrare Client" 
-                    Command="{Binding RegisterCommand}" 
-                    Background="Transparent" BorderThickness="0" 
-                    Foreground="Blue" Cursor="Hand" Margin="0,10"/>
-        </StackPanel>
+                <!-- Login Button -->
+                <Button Content="Autentificare" 
+                        Command="{Binding LoginCommand}" 
+                        CommandParameter="{Binding ElementName=PasswordInput}"
+                        Height="50" FontSize="16" FontWeight="Bold" Cursor="Hand"
+                        Foreground="White">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#2980B9"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" CornerRadius="25" Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#3498DB"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#1ABC9C"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <!-- Register Link -->
+                <Button Content="Crează un cont nou" 
+                        Command="{Binding RegisterCommand}" 
+                        Background="Transparent" Foreground="#7F8C8D" BorderThickness="0" 
+                        HorizontalAlignment="Center" Margin="0,20,0,0" Cursor="Hand"
+                        FontSize="14">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline" Foreground="{TemplateBinding Foreground}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="#3498DB"/>
+                                                <Setter Property="Cursor" Value="Hand"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

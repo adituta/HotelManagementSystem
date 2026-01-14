@@ -24,10 +24,13 @@ namespace HotelManagementSystem.ViewModels
             {
                 _selectedRoom = value;
                 OnPropertyChanged("SelectedRoom");
-                OnPropertyChanged("IsRoomSelected");
+                OnPropertyChanged("IsRoomSelected"); // Keep this line as it's relevant for UI state
 
-                // Când selectăm o cameră, încărcăm calendarul ei
-                if (_selectedRoom != null) LoadRoomSchedule(_selectedRoom.Id);
+                if (_selectedRoom != null)
+                {
+                    LoadRoomSchedule(_selectedRoom.Id); // Force refresh of reservations
+                    CheckAvailabilityForDate();
+                }
             }
         }
 
@@ -67,6 +70,81 @@ namespace HotelManagementSystem.ViewModels
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
+        // --- CALENDAR LOGIC ---
+        private DateTime _calendarSelectedDate = DateTime.Today;
+        public DateTime CalendarSelectedDate
+        {
+            get { return _calendarSelectedDate; }
+            set
+            {
+                _calendarSelectedDate = value;
+                OnPropertyChanged("CalendarSelectedDate");
+                CheckAvailabilityForDate(); // Check triggers immediately
+            }
+        }
+
+        private string _availabilityStatusMessage;
+        public string AvailabilityStatusMessage
+        {
+            get { return _availabilityStatusMessage; }
+            set { _availabilityStatusMessage = value; OnPropertyChanged("AvailabilityStatusMessage"); }
+        }
+
+        private string _availabilityStatusColor;
+        public string AvailabilityStatusColor
+        {
+            get { return _availabilityStatusColor; }
+            set { _availabilityStatusColor = value; OnPropertyChanged("AvailabilityStatusColor"); }
+        }
+
+        private void CheckAvailabilityForDate()
+        {
+            try
+            {
+                if (SelectedRoom == null)
+                {
+                    AvailabilityStatusMessage = "Selectați o cameră mai întâi.";
+                    AvailabilityStatusColor = "Gray";
+                    return;
+                }
+
+                // Folosim lista deja încărcată (RoomFutureReservations) pentru a evita query-uri inutile
+                // și pentru a putea compara DOAR datele (fără ore), rezolvând problema afișării.
+                
+                // Dacă lista e null (nu s-a încărcat încă), o ignorăm momentan
+                var reservations = RoomFutureReservations ?? new List<Reservation>();
+
+                var reservation = reservations.FirstOrDefault(r => 
+                    r.Status != ReservationStatus.Cancelled &&
+                    CalendarSelectedDate.Date >= r.CheckInDate.Date && 
+                    CalendarSelectedDate.Date < r.CheckOutDate.Date);
+
+                if (reservation != null)
+                {
+                    AvailabilityStatusMessage = $"OCUPAT - {reservation.User?.FullName ?? "Client"} (Până pe {reservation.CheckOutDate:dd.MM})";
+                    AvailabilityStatusColor = "#E74C3C"; 
+                }
+                else
+                {
+                    if (CalendarSelectedDate.Date == DateTime.Today && 
+                       (SelectedRoom.Status == RoomStatus.CleaningRequired || SelectedRoom.Status == RoomStatus.CleaningInProgress))
+                    {
+                         AvailabilityStatusMessage = $"INDISPONIBIL - Necesită Curățenie!";
+                         AvailabilityStatusColor = "#F1C40F"; 
+                    }
+                    else
+                    {
+                        AvailabilityStatusMessage = "DISPONIBIL";
+                        AvailabilityStatusColor = "#27AE60"; 
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                 MessageBox.Show("Eroare la verificarea disponibilității: " + ex.ToString());
+            }
+        }
+
         // --- LISTA DE DATE OCUPATE (Pentru Calendar) ---
         // Vom trimite această listă către View pentru a bloca datele
         public List<Reservation> RoomFutureReservations { get; set; }
@@ -80,65 +158,80 @@ namespace HotelManagementSystem.ViewModels
 
         public ReceptionMapViewModel()
         {
-            StartDate = DateTime.Today;
-            EndDate = DateTime.Today.AddDays(1);
-
-            LoadData();
-            LoadData();
-            BookOnSpotCommand = new RelayCommand(o => ExecuteBookOnSpot());
-            RefreshCommand = new RelayCommand(o => LoadData());
-
-            SetRoomCommand = new RelayCommand(obj =>
+            try
             {
-                var r = obj as Room;
-                if (r != null)
+                StartDate = DateTime.Today;
+                EndDate = DateTime.Today.AddDays(1);
+
+                LoadData();
+                
+                BookOnSpotCommand = new RelayCommand(o => ExecuteBookOnSpot());
+                RefreshCommand = new RelayCommand(o => LoadData());
+
+                SetRoomCommand = new RelayCommand(obj =>
                 {
-                    SelectedRoom = r;
-                }
-            });
+                    var r = obj as Room;
+                    if (r != null)
+                    {
+                        SelectedRoom = r;
+                        CheckAvailabilityForDate(); // Update availability when room changes
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Eroare la inițializarea hărții: " + ex.ToString());
+            }
         }
 
         private void LoadData()
         {
-            using (var db = new HotelDBContext())
+            try
             {
-                // 1. Încărcăm lista de camere brută
-                var roomsList = db.Rooms.OrderBy(r => r.RoomNumber).ToList();
-
-                // 2. Căutăm ID-urile camerelor care sunt ocupate ASTĂZI
-                // O cameră e ocupată dacă există o rezervare ACTIVĂ unde:
-                // CheckIn <= Azi ȘI CheckOut > Azi
-                var today = DateTime.Today;
-
-                var occupiedRoomIds = db.Reservations
-                    .Where(r => r.Status == ReservationStatus.Active &&
-                                r.CheckInDate <= today &&
-                                r.CheckOutDate > today)
-                    .SelectMany(r => r.Rooms)
-                    .Select(r => r.Id)
-                    .ToList();
-
-                // 3. Actualizăm statusul DOAR ÎN MEMORIE (pentru afișare corectă pe hartă)
-                // Nu salvăm în DB, doar colorăm interfața
-                foreach (var room in roomsList)
+                using (var db = new HotelDBContext())
                 {
-                    // Dacă camera este în lista celor ocupate, o facem Roșie
-                    if (occupiedRoomIds.Contains(room.Id))
+                    // 1. Încărcăm lista de camere brută
+                    var roomsList = db.Rooms.OrderBy(r => r.RoomNumber).ToList();
+
+                    // 2. Căutăm ID-urile camerelor care sunt ocupate ASTĂZI
+                    var today = DateTime.Today;
+
+                    var occupiedRoomIds = db.Reservations
+                        .Where(r => r.Status == ReservationStatus.Active &&
+                                    r.CheckInDate <= today &&
+                                    r.CheckOutDate > today)
+                        .SelectMany(r => r.Rooms)
+                        .Select(r => r.Id)
+                        .ToList();
+
+                    // 3. Actualizăm statusul DOAR ÎN MEMORIE
+                    foreach (var room in roomsList)
                     {
-                        room.Status = RoomStatus.Occupied;
+                        if (room.Status == RoomStatus.CleaningRequired || room.Status == RoomStatus.CleaningInProgress)
+                        {
+                            continue;
+                        }
+
+                        if (occupiedRoomIds.Contains(room.Id))
+                        {
+                            room.Status = RoomStatus.Occupied;
+                        }
                     }
-                    // Altfel, o lăsăm cum e în baza de date (Free, CleaningRequired, etc.)
+
+                    // 4. Trimitem lista către interfață
+                    AllRooms = new ObservableCollection<Room>(roomsList);
+
+                    // 5. Încărcăm și clienții
+                    AllClients = new ObservableCollection<User>(db.Users.Where(u => u.Role == UserRole.Client).ToList());
                 }
-
-                // 4. Trimitem lista către interfață
-                AllRooms = new ObservableCollection<Room>(roomsList);
-
-                // Încărcăm și clienții
-                AllClients = new ObservableCollection<User>(db.Users.Where(u => u.Role == UserRole.Client).ToList());
 
                 // Notificăm UI-ul
                 OnPropertyChanged("AllRooms");
                 OnPropertyChanged("AllClients");
+            }
+            catch (Exception ex)
+            {
+                 MessageBox.Show("Eroare la încărcarea datelor: " + ex.Message);
             }
         }
 
@@ -146,10 +239,11 @@ namespace HotelManagementSystem.ViewModels
         {
             using (var db = new HotelDBContext())
             {
-                // Căutăm rezervările viitoare sau active pentru această cameră
-                // Atenție: ReservationRoom face legătura
+                // Modificare: Include doar rezervările Active (Confirmate).
+                // Cele Pending vor apărea cu Verde (Disponibile) până când sunt confirmate.
                 RoomFutureReservations = db.Reservations
-                    .Where(r => r.Status != ReservationStatus.Cancelled && r.CheckOutDate >= DateTime.Today)
+                    .Include(r => r.User) 
+                    .Where(r => r.Status == ReservationStatus.Active && r.CheckOutDate >= DateTime.Today)
                     .Where(r => r.Rooms.Any(room => room.Id == roomId))
                     .ToList();
 
@@ -163,14 +257,14 @@ namespace HotelManagementSystem.ViewModels
         {
             if (SelectedRoom == null)
             {
-                MessageBox.Show("Selectați o cameră!");
+                MessageBoxHelper.Show("Selectați o cameră!", "Eroare");
                 return;
             }
 
             // Validare date
             if (StartDate >= EndDate)
             {
-                MessageBox.Show("Data de plecare trebuie să fie după data de sosire.");
+                MessageBoxHelper.Show("Data de plecare trebuie să fie după data de sosire.", "Eroare");
                 return;
             }
 
@@ -184,7 +278,7 @@ namespace HotelManagementSystem.ViewModels
 
                 if (isOccupied)
                 {
-                    MessageBox.Show("Camera este deja rezervată în perioada selectată! Verificați calendarul.");
+                    MessageBoxHelper.Show("Camera este deja rezervată în perioada selectată! Verificați calendarul.", "Info");
                     return;
                 }
 
@@ -195,7 +289,7 @@ namespace HotelManagementSystem.ViewModels
                 {
                     if (string.IsNullOrWhiteSpace(NewClientFullName) || string.IsNullOrWhiteSpace(NewClientPhone))
                     {
-                        MessageBox.Show("Introduceți Numele și Telefonul clientului nou.");
+                        MessageBoxHelper.Show("Introduceți Numele și Telefonul clientului nou.", "Eroare");
                         return;
                     }
 
@@ -219,7 +313,7 @@ namespace HotelManagementSystem.ViewModels
                 {
                     if (SelectedClient == null)
                     {
-                        MessageBox.Show("Selectați un client sau creați unul nou.");
+                        MessageBoxHelper.Show("Selectați un client sau creați unul nou.", "Eroare");
                         return;
                     }
                     userIdToBook = SelectedClient.Id;
@@ -249,7 +343,7 @@ namespace HotelManagementSystem.ViewModels
                 db.Reservations.Add(newRes);
                 db.SaveChanges();
 
-                MessageBox.Show(string.Format("Rezervare efectuată cu succes pentru camera {0}!", SelectedRoom.RoomNumber));
+                MessageBoxHelper.Show(string.Format("Rezervare efectuată cu succes pentru camera {0}!", SelectedRoom.RoomNumber), "Succes");
 
                 // Refresh Calendar și Grid
                 LoadData();

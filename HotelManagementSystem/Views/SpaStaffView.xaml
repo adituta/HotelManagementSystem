@@ -4,8 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HotelManagementSystem.Views"
+             xmlns:converters="clr-namespace:HotelManagementSystem.Helpers"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="900">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:RoomsToStringConverter x:Key="RoomsConverter"/>
+    </UserControl.Resources>
 
     <Grid Background="#F4F7F6">
         <Grid.ColumnDefinitions>
@@ -18,8 +23,10 @@
             <StackPanel>
                 <TextBlock Text="SPA CENTER" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,40,0,40" HorizontalAlignment="Center"/>
 
-                <Button Content="Programări Azi" Background="#9B59B6" Foreground="White" Height="50" BorderThickness="0" FontSize="16" HorizontalContentAlignment="Left" Padding="20,0"/>
-                
+                <Button Command="{Binding ShowActiveCommand}" Content="Programări Azi" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Command="{Binding ShowHistoryCommand}" Content="Istoric" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Command="{Binding ViewIncomeCommand}" Content="Veniturile Mele" Style="{StaticResource SidebarButtonStyle}"/>
+
                 <Separator Background="#A569BD" Margin="20,30,20,10"/>
 
                 <Button Command="{Binding RefreshCommand}" Content="⟳ Actualizează" Background="Transparent" Foreground="#ECF0F1" BorderThickness="1" BorderBrush="#A569BD" Margin="20,10" Height="40"/>
@@ -29,122 +36,203 @@
 
         <!-- Main Content -->
         <Grid Grid.Column="1" Margin="30">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+            
+            <!-- ACTIVE APPOINTMENTS VIEW -->
+            <Grid Visibility="{Binding IsActiveView, Converter={StaticResource BoolToVis}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
-                <TextBlock Text="Cereri Noi &amp; Confirmate" FontSize="24" FontWeight="SemiBold" Foreground="#2C3E50"/>
-                <TextBlock Text="{Binding ActiveCount, StringFormat='({0} noi)'}" FontSize="24" Foreground="#7F8C8D" Margin="10,0,0,0"/>
-            </StackPanel>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+                    <TextBlock Text="Cereri Noi &amp; Confirmate (Azi+)" FontSize="24" FontWeight="SemiBold" Foreground="#2C3E50"/>
+                    <TextBlock Text="{Binding ActiveCount, StringFormat='({0} noi)'}" FontSize="24" Foreground="#7F8C8D" Margin="10,0,0,0"/>
+                </StackPanel>
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Appointments}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="White" Width="280" Margin="0,0,20,20" CornerRadius="8" Padding="15">
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="10" Direction="270" ShadowDepth="2" Opacity="0.1" Color="Black"/>
-                                </Border.Effect>
-                                <StackPanel>
-                                    <!-- Header -->
-                                    <Grid Margin="0,0,0,10">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Reservation.User.FullName}" FontWeight="Bold" Foreground="#2C3E50" FontSize="14" TextTrimming="CharacterEllipsis"/>
-                                            <TextBlock Text="{Binding StartTime, StringFormat='Ora: \{0:hh\\:mm\}'}" Foreground="#8E44AD" FontSize="13" FontWeight="SemiBold"/>
-                                        </StackPanel>
-                                        
-                                        <!-- Status Badge -->
-                                        <Border CornerRadius="4" Padding="8,4">
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsConfirmed}" Value="False">
-                                                            <Setter Property="Background" Value="#FFF59D"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsConfirmed}" Value="True">
-                                                            <Setter Property="Background" Value="#C8E6C9"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                            <TextBlock FontWeight="Bold" FontSize="11" Foreground="#555">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Appointments}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="White" Width="280" Margin="0,0,20,20" CornerRadius="8" Padding="15">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10" Direction="270" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+                                    </Border.Effect>
+                                    <StackPanel>
+                                        <!-- Header -->
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Reservation.User.FullName}" FontWeight="Bold" Foreground="#2C3E50" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding StartTime, StringFormat='Ora: \{0:hh\\:mm\}'}" Foreground="#8E44AD" FontSize="13" FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                            
+                                            <!-- Status Badge -->
+                                            <Border CornerRadius="4" Padding="8,4">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsConfirmed}" Value="False">
-                                                                <Setter Property="Text" Value="NOU"/>
+                                                                <Setter Property="Background" Value="#FFF59D"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding IsConfirmed}" Value="True">
-                                                                <Setter Property="Text" Value="CONFIRMAT"/>
+                                                                <Setter Property="Background" Value="#C8E6C9"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </Border>
-                                    </Grid>
+                                                </Border.Style>
+                                                <TextBlock FontWeight="Bold" FontSize="11" Foreground="#555">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsConfirmed}" Value="False">
+                                                                    <Setter Property="Text" Value="NOU"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsConfirmed}" Value="True">
+                                                                    <Setter Property="Text" Value="CONFIRMAT"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </Grid>
 
-                                    <Separator Background="#ECF0F1" Margin="0,0,0,10"/>
+                                        <Separator Background="#ECF0F1" Margin="0,0,0,10"/>
 
-                                    <!-- Content -->
-                                    <TextBlock Text="{Binding SpaService.Name}" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5" TextWrapping="Wrap"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
-                                        <TextBlock Text="Persoane: " Foreground="#7F8C8D"/>
-                                        <TextBlock Text="{Binding PersonsCount}" FontWeight="Bold" Foreground="#2C3E50"/>
+                                        <!-- Content -->
+                                        <TextBlock Text="{Binding SpaService.Name}" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5" TextWrapping="Wrap"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                                            <TextBlock Text="Persoane: " Foreground="#7F8C8D"/>
+                                            <TextBlock Text="{Binding PersonsCount}" FontWeight="Bold" Foreground="#2C3E50"/>
+                                        </StackPanel>
+
+                                        <!-- Action Button -->
+                                        <Button Command="{Binding DataContext.AcceptCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                CommandParameter="{Binding}"
+                                                Height="40" 
+                                                BorderThickness="0" 
+                                                FontWeight="Bold"
+                                                Cursor="Hand">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsConfirmed}" Value="False">
+                                                            <Setter Property="Background" Value="#27AE60"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="Content" Value="ACCEPTĂ PROGRAMAREA"/>
+                                                            <Setter Property="IsEnabled" Value="True"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsConfirmed}" Value="True">
+                                                            <Setter Property="Background" Value="#ECF0F1"/>
+                                                            <Setter Property="Foreground" Value="#BDC3C7"/>
+                                                            <Setter Property="Content" Value="ACCEPTAT"/>
+                                                            <Setter Property="IsEnabled" Value="False"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
                                     </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+            
+            <!-- HISTORY VIEW -->
+            <Grid Visibility="{Binding IsHistoryView, Converter={StaticResource BoolToVis}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                                    <!-- Action Button -->
-                                    <Button Command="{Binding DataContext.AcceptCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                            CommandParameter="{Binding}"
-                                            Height="40" 
-                                            BorderThickness="0" 
-                                            FontWeight="Bold"
-                                            Cursor="Hand">
-                                        <Button.Style>
-                                            <Style TargetType="Button">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border Background="{TemplateBinding Background}" CornerRadius="6">
-                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsConfirmed}" Value="False">
-                                                        <Setter Property="Background" Value="#27AE60"/>
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                        <Setter Property="Content" Value="ACCEPTĂ PROGRAMAREA"/>
-                                                        <Setter Property="IsEnabled" Value="True"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsConfirmed}" Value="True">
-                                                        <Setter Property="Background" Value="#ECF0F1"/>
-                                                        <Setter Property="Foreground" Value="#BDC3C7"/>
-                                                        <Setter Property="Content" Value="ACCEPTAT"/>
-                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+                    <TextBlock Text="Istoric Programări" FontSize="24" FontWeight="SemiBold" Foreground="#2C3E50"/>
+                    <TextBlock Text="{Binding HistoryAppointments.Count, StringFormat='({0})'}" FontSize="24" Foreground="#7F8C8D" Margin="10,0,0,0"/>
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding HistoryAppointments}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#FAFAFA" Width="280" Margin="0,0,20,20" CornerRadius="8" Padding="15" BorderThickness="1" BorderBrush="#E0E0E0">
+                                    <StackPanel>
+                                        <!-- Header -->
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Reservation.User.FullName}" FontWeight="Bold" Foreground="#7F8C8D" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Reservation.Rooms, Converter={StaticResource RoomsConverter}}" FontWeight="Bold" Foreground="#2C3E50" FontSize="13" Margin="0,2,0,5"/>
+                                                
+                                                <StackPanel Orientation="Horizontal">
+                                                     <TextBlock Text="{Binding AppointmentDate, StringFormat='dd MMM yyyy'}" Foreground="#7F8C8D" FontSize="12" Margin="0,0,8,0"/>
+                                                     <TextBlock Text="{Binding StartTime, StringFormat='Ora: \{0:hh\\:mm\}'}" Foreground="#8E44AD" FontWeight="SemiBold" FontSize="12"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Border CornerRadius="4" Padding="6,2" Background="#ECF0F1">
+                                                <TextBlock FontWeight="Bold" FontSize="11" Foreground="#95A5A6">
+                                                     <!-- Status text controlled by triggers -->
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsConfirmed}" Value="True">
+                                                                    <Setter Property="Text" Value="ACCEPTAT"/>
+                                                                    <Setter Property="Foreground" Value="#27AE60"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsConfirmed}" Value="False">
+                                                                    <Setter Property="Text" Value="NEONORAT"/>
+                                                                    <Setter Property="Foreground" Value="#C0392B"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </Grid>
+
+                                        <Separator Background="#ECF0F1" Margin="0,0,0,10"/>
+
+                                        <!-- Content -->
+                                        <TextBlock Text="{Binding SpaService.Name}" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5" TextWrapping="Wrap" Foreground="#34495E"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Persoane: " Foreground="#95A5A6"/>
+                                            <TextBlock Text="{Binding PersonsCount}" FontWeight="Bold" Foreground="#7F8C8D"/>
+                                        </StackPanel>
+
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
         </Grid>
     </Grid>
 </UserControl>

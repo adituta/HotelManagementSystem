@@ -4,9 +4,28 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HotelManagementSystem.Views"
+             xmlns:vm="clr-namespace:HotelManagementSystem.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="#F0F2F5">
+        <Grid.Resources>
+            <DataTemplate DataType="{x:Type vm:PendingReceiptsViewModel}">
+                <local:PendingReceiptsView/>
+            </DataTemplate>
+            <!-- Adaugam aici si DataTemplate pentru InvoiceView daca e folosit inAdminView -->
+            <DataTemplate DataType="{x:Type vm:InvoiceViewModel}">
+                <local:InvoiceView/>
+            </DataTemplate>
+             <DataTemplate DataType="{x:Type vm:ManageEmployeesViewModel}">
+                <local:ManageEmployeesView/>
+            </DataTemplate>
+             <DataTemplate DataType="{x:Type vm:ReceptionMapViewModel}">
+                <local:ReceptionMapView/>
+            </DataTemplate>
+             <DataTemplate DataType="{x:Type vm:FinanceViewModel}">
+                <local:FinanceView/>
+            </DataTemplate>
+        </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <!-- Meniu Lateral -->
@@ -16,11 +35,23 @@
 
         <!-- Sidebar -->
         <StackPanel Grid.Column="0" Background="#2C3E50">
+            <StackPanel.Resources>
+                <Style TargetType="Button" x:Key="SidebarButtonStyle">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="Margin" Value="0,5"/>
+                    <Setter Property="Padding" Value="10"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                </Style>
+            </StackPanel.Resources>
             <TextBlock Text="ADMIN PANEL" Foreground="White" FontSize="18" FontWeight="Bold" Margin="20,30,20,30" HorizontalAlignment="Center"/>
 
             <Button Content="Gestiune Angajați" Command="{Binding ShowEmployeesCommand}" Style="{StaticResource SidebarButtonStyle}"/>
             <Button Content="Situație Camere" Command="{Binding ShowRoomsCommand}" Style="{StaticResource SidebarButtonStyle}"/>
             <Button Content="Bilanț Financiar" Command="{Binding ShowFinanceCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+            <Button Content="Facturi De Aprobat" Command="{Binding ShowPendingReceiptsCommand}" Style="{StaticResource SidebarButtonStyle}"/>
             <Separator Background="#34495E" Margin="10,20"/>
             <Button Content="Logout" Command="{Binding LogoutCommand}" Background="#E74C3C" Foreground="White" Margin="10"/>
         </StackPanel>

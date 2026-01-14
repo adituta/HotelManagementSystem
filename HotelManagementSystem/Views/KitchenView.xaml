@@ -9,6 +9,7 @@
              d:DesignHeight="600" d:DesignWidth="900">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:RoomsToStringConverter x:Key="RoomsConverter"/>
     </UserControl.Resources>
 
     <Grid Background="#F4F7F6">
@@ -22,11 +23,10 @@
             <StackPanel>
                 <TextBlock Text="KITCHEN" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,40,0,40" HorizontalAlignment="Center"/>
 
-                <Button Content="Comenzi Active" Background="#34495E" Foreground="White" Height="50" BorderThickness="0" FontSize="16" HorizontalContentAlignment="Left" Padding="20,0"/>
-                <!-- Placeholder buttons for future -->
-                <Button Content="Istoric" Style="{StaticResource SidebarButtonStyle}" Opacity="0.5"/>
-                <Button Content="Inventar" Style="{StaticResource SidebarButtonStyle}" Opacity="0.5"/>
-
+                <Button Command="{Binding ShowActiveCommand}" Content="Comenzi Active" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Command="{Binding ShowHistoryCommand}" Content="Istoric" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Command="{Binding ViewIncomeCommand}" Content="Veniturile Mele" Style="{StaticResource SidebarButtonStyle}"/>
+                
                 <Separator Background="#7F8C8D" Margin="20,30,20,10"/>
                 
                 <Button Command="{Binding RefreshCommand}" Content="⟳ Actualizează" Background="Transparent" Foreground="#ECF0F1" BorderThickness="1" BorderBrush="#7F8C8D" Margin="20,10" Height="40"/>
@@ -36,118 +36,177 @@
 
         <!-- Main Content -->
         <Grid Grid.Column="1" Margin="30">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+            
+            <!-- ACTIVE ORDERS VIEW -->
+            <Grid Visibility="{Binding IsActiveView, Converter={StaticResource BoolToVis}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
-                <TextBlock Text="Comenzi în Așteptare &amp; Pregătire" FontSize="24" FontWeight="SemiBold" Foreground="#2C3E50"/>
-                <TextBlock Text="{Binding ActiveOrders.Count, StringFormat='({0})'}" FontSize="24" Foreground="#7F8C8D" Margin="10,0,0,0"/>
-            </StackPanel>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+                    <TextBlock Text="Comenzi în Așteptare &amp; Pregătire" FontSize="24" FontWeight="SemiBold" Foreground="#2C3E50"/>
+                    <TextBlock Text="{Binding ActiveOrders.Count, StringFormat='({0})'}" FontSize="24" Foreground="#7F8C8D" Margin="10,0,0,0"/>
+                </StackPanel>
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding ActiveOrders}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="White" Width="280" Margin="0,0,20,20" CornerRadius="8" Padding="15">
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="10" Direction="270" ShadowDepth="2" Opacity="0.1" Color="Black"/>
-                                </Border.Effect>
-                                <StackPanel>
-                                    <!-- Header: Room/Client -->
-                                    <Grid Margin="0,0,0,10">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Reservation.User.FullName}" FontWeight="Bold" Foreground="#2C3E50" FontSize="14" TextTrimming="CharacterEllipsis"/>
-                                            <TextBlock Text="{Binding OrderDate, StringFormat='HH:mm'}" Foreground="#95A5A6" FontSize="12"/>
-                                        </StackPanel>
-                                        <Border CornerRadius="4" Padding="6,2">
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Setter Property="Background" Value="#ECF0F1"/> <!-- Default -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding ActiveOrders}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="White" Width="280" Margin="0,0,20,20" CornerRadius="8" Padding="15">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10" Direction="270" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+                                    </Border.Effect>
+                                    <StackPanel>
+                                        <!-- Header: Room/Client -->
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Reservation.User.FullName}" FontWeight="Bold" Foreground="#2C3E50" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding OrderDate, StringFormat='HH:mm'}" Foreground="#95A5A6" FontSize="12"/>
+                                            </StackPanel>
+                                            <Border CornerRadius="4" Padding="6,2">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="#ECF0F1"/> <!-- Default -->
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                                <Setter Property="Background" Value="#FFF59D"/> <!-- Light Yellow -->
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Cooking">
+                                                                <Setter Property="Background" Value="#BBDEFB"/> <!-- Light Blue -->
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Served">
+                                                                <Setter Property="Background" Value="#C8E6C9"/> <!-- Light Green -->
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding Status}" Foreground="#7F8C8D" FontWeight="Bold" FontSize="11"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <Separator Background="#ECF0F1" Margin="0,0,0,10"/>
+
+                                        <!-- Content -->
+                                        <TextBlock Text="{Binding MealType}" Foreground="#1ABC9C" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Text="{Binding MenuItem.Name}" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding FoodDetails}" FontSize="13" Foreground="#7F8C8D" Margin="0,2,0,15" TextWrapping="Wrap" FontStyle="Italic"/>
+
+                                        <!-- Action Button -->
+                                        <Button Command="{Binding DataContext.AdvanceStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                CommandParameter="{Binding}"
+                                                Height="40" 
+                                                BorderThickness="0" 
+                                                FontWeight="Bold"
+                                                Cursor="Hand">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Status}" Value="Pending">
-                                                            <Setter Property="Background" Value="#FFF59D"/> <!-- Light Yellow -->
+                                                            <Setter Property="Background" Value="#F1C40F"/>
+                                                            <Setter Property="Foreground" Value="#34495E"/>
+                                                            <Setter Property="Content" Value="PREIA COMANDA"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Cooking">
-                                                            <Setter Property="Background" Value="#BBDEFB"/> <!-- Light Blue -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="Accepted">
+                                                            <Setter Property="Background" Value="#3498DB"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="Content" Value="ÎNCEPE GĂTITUL"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Served">
-                                                            <Setter Property="Background" Value="#C8E6C9"/> <!-- Light Green -->
+                                                        <!-- Status 0 hack -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="0">
+                                                            <Setter Property="Background" Value="#F1C40F"/>
+                                                            <Setter Property="Content" Value="PREIA COMANDA"/>
+                                                        </DataTrigger>
+                                                        
+                                                         <DataTrigger Binding="{Binding Status}" Value="Cooking">
+                                                            <Setter Property="Background" Value="#2ECC71"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="Content" Value="FINALIZATĂ (SERVEȘTE)"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </Border.Style>
-                                            <TextBlock Text="{Binding Status}" Foreground="#7F8C8D" FontWeight="Bold" FontSize="11"/>
-                                        </Border>
-                                    </Grid>
+                                            </Button.Style>
+                                        </Button>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
 
-                                    <Separator Background="#ECF0F1" Margin="0,0,0,10"/>
+            <!-- HISTORY VIEW -->
+            <Grid Visibility="{Binding IsHistoryView, Converter={StaticResource BoolToVis}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                                    <!-- Content -->
-                                    <TextBlock Text="{Binding MealType}" Foreground="#1ABC9C" FontWeight="Bold" FontSize="12"/>
-                                    <TextBlock Text="{Binding MenuItem.Name}" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0" TextWrapping="Wrap"/>
-                                    <TextBlock Text="{Binding FoodDetails}" FontSize="13" Foreground="#7F8C8D" Margin="0,2,0,15" TextWrapping="Wrap" FontStyle="Italic"/>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+                    <TextBlock Text="Istoric Comenzi Finalizate" FontSize="24" FontWeight="SemiBold" Foreground="#2C3E50"/>
+                    <TextBlock Text="{Binding HistoryOrders.Count, StringFormat='({0})'}" FontSize="24" Foreground="#7F8C8D" Margin="10,0,0,0"/>
+                </StackPanel>
 
-                                    <!-- Action Button -->
-                                    <Button Command="{Binding DataContext.AdvanceStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                            CommandParameter="{Binding}"
-                                            Height="40" 
-                                            BorderThickness="0" 
-                                            FontWeight="Bold"
-                                            Cursor="Hand">
-                                        <Button.Style>
-                                            <Style TargetType="Button">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border Background="{TemplateBinding Background}" CornerRadius="6">
-                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Pending">
-                                                        <Setter Property="Background" Value="#F1C40F"/>
-                                                        <Setter Property="Foreground" Value="#34495E"/>
-                                                        <Setter Property="Content" Value="PREIA COMANDA"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Accepted">
-                                                        <Setter Property="Background" Value="#3498DB"/>
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                        <Setter Property="Content" Value="ÎNCEPE GĂTITUL"/>
-                                                    </DataTrigger>
-                                                    <!-- Status 0 hack -->
-                                                    <DataTrigger Binding="{Binding Status}" Value="0">
-                                                        <Setter Property="Background" Value="#F1C40F"/>
-                                                        <Setter Property="Content" Value="PREIA COMANDA"/>
-                                                    </DataTrigger>
-                                                    
-                                                     <DataTrigger Binding="{Binding Status}" Value="Cooking">
-                                                        <Setter Property="Background" Value="#2ECC71"/>
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                        <Setter Property="Content" Value="FINALIZATĂ (SERVEȘTE)"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding HistoryOrders}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#FAFAFA" Width="280" Margin="0,0,20,20" CornerRadius="8" Padding="15" BorderThickness="1" BorderBrush="#E0E0E0">
+                                    <StackPanel>
+                                        <!-- Header: Room/Client -->
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Reservation.User.FullName}" FontWeight="Bold" Foreground="#7F8C8D" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Reservation.Rooms, Converter={StaticResource RoomsConverter}}" FontWeight="Bold" Foreground="#2C3E50" FontSize="13" Margin="0,2,0,0"/>
+                                                <TextBlock Text="{Binding OrderDate, StringFormat='dd MMM HH:mm'}" Foreground="#BDC3C7" FontSize="12"/>
+                                            </StackPanel>
+                                            <Border CornerRadius="4" Padding="6,2" Background="#ECF0F1">
+                                                <TextBlock Text="{Binding Status}" Foreground="#95A5A6" FontWeight="Bold" FontSize="11"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <Separator Background="#ECF0F1" Margin="0,0,0,10"/>
+
+                                        <!-- Content -->
+                                        <TextBlock Text="{Binding MealType}" Foreground="#16A085" FontWeight="Bold" FontSize="12" Opacity="0.8"/>
+                                        <TextBlock Text="{Binding MenuItem.Name}" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0" TextWrapping="Wrap" Foreground="#34495E"/>
+                                        <!-- Removed duplicate/redundant FoodDetails text -->
+                                        <!-- <TextBlock Text="{Binding FoodDetails}" FontSize="13" Foreground="#95A5A6" Margin="0,2,0,0" TextWrapping="Wrap" FontStyle="Italic"/> -->
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+            
         </Grid>
     </Grid>
 </UserControl>

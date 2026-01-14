@@ -26,7 +26,8 @@ namespace HotelManagementSystem.Models
         public DbSet<ReservationRoom> ReservationRooms { get; set; }
         public DbSet<SpaAppointment> SpaAppointments { get; set; }
         public DbSet<FoodOrder> FoodOrders { get; set; }
-        public DbSet<Notification> Notifications { get; set; }  
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<SalaryPayment> SalaryPayments { get; set; }  
 
 
         public DbSet<MenuItem> MenuItems { get; set; }

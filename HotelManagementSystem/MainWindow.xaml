@@ -74,6 +74,10 @@
             <views:ReceptionConfirmationsView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type viewmodels:MyIncomeViewModel}">
+            <views:MyIncomeView/>
+        </DataTemplate>
+
 
     </Window.Resources>
 

@@ -1,0 +1,52 @@
+<UserControl x:Class="HotelManagementSystem.Views.PendingReceiptsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800"
+             Background="White">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Facturi în Așteptare Aprobare" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" Foreground="#C0392B"/>
+
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding PendingReceipts}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="#E74C3C" BorderThickness="1" CornerRadius="5" Padding="15" Margin="0,0,0,10" Background="#FDEDEC">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Detalii Sejur & User -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding User.FullName}" FontWeight="Bold" FontSize="16" Foreground="#2C3E50"/>
+                                    <TextBlock Text="{Binding CheckOutDate, StringFormat='Check-out: {0:dd MMM yyyy}'}" FontSize="14"/>
+                                    <TextBlock Text="{Binding TotalPrice, StringFormat='Total: {0:N2} RON'}" Foreground="#C0392B" FontWeight="Bold" Margin="0,5,0,0"/>
+                                </StackPanel>
+
+                                <!-- Buton Review -->
+                                <Button Grid.Column="1" Content="Revizuiește &amp; Aprobă" 
+                                        Command="{Binding DataContext.ReviewReceiptCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                        CommandParameter="{Binding}"
+                                        Padding="15,5" Background="#E67E22" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <TextBlock Text="Ați aprobat toate facturile. Unele noi vor apărea după checkout-ul clienților." 
+                   Visibility="{Binding HasNoPendingReceipts, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Foreground="#7F8C8D" FontSize="16"/>
+
+    </Grid>
+</UserControl>

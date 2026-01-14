@@ -57,7 +57,7 @@ namespace HotelManagementSystem.ViewModels
 
             if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Te rugam introdu utilizatorul si parola.");
+                MessageBoxHelper.Show("Te rugam introdu utilizatorul si parola.", "Eroare");
                 return;
             }
 
@@ -91,14 +91,14 @@ namespace HotelManagementSystem.ViewModels
                 if (user != null)
                 {
                     //Logare reusita!
-                    MessageBox.Show(string.Format("Bine ai venit, {0}!", user.FullName));
+                    MessageBoxHelper.Show(string.Format("Bine ai venit, {0}!", user.FullName), "Succes");
 
                     //Aici voi schimba pagina in functie de rolul userului
                     SwitchToRoleView(user);
                 }
                 else
                 {
-                    MessageBox.Show("Utilizator sau parola incorecta.");
+                    MessageBoxHelper.Show("Utilizator sau parola incorecta.", "Eroare Login");
                 }
             }
         }
@@ -111,7 +111,7 @@ namespace HotelManagementSystem.ViewModels
                     _mainVM.CurrentView = new AdminViewModel(_mainVM);
                     break;
                 case Enums.UserRole.Receptionist:
-                    _mainVM.CurrentView = new ReceptionViewModel(_mainVM);
+                    _mainVM.CurrentView = new ReceptionViewModel(_mainVM, user);
                     break;
                 case Enums.UserRole.Cleaning:
                     _mainVM.CurrentView = new MaidViewModel(_mainVM, user); 
@@ -126,7 +126,7 @@ namespace HotelManagementSystem.ViewModels
                     _mainVM.CurrentView = new SpaStaffViewModel(_mainVM, user);
                     break;
                 default:
-                    MessageBox.Show("Rol de utilizator necunoscut.");
+                    MessageBoxHelper.Show("Rol de utilizator necunoscut.", "Eroare");
                     break;
             }
         }

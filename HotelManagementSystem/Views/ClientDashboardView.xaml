@@ -22,6 +22,12 @@
             <DataTemplate DataType="{x:Type vm:NotificationsViewModel}">
                 <local:NotificationsView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:MyReservationsViewModel}">
+                <local:MyReservationsView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:MyReceiptsViewModel}">
+                <local:MyReceiptsView/>
+            </DataTemplate>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220"/>
@@ -48,10 +54,14 @@
 
             <Button Content="Rezervare Nouă" Command="{Binding ShowMakeReservationCommand}" Style="{StaticResource SidebarButtonStyle}"/>
             <Button Content="Rezervările Mele" Command="{Binding ShowMyReservationsCommand}" Style="{StaticResource SidebarButtonStyle}"/>
-            <Button Content="Facilități (Sejur Activ)" Command="{Binding ShowFacilitiesCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+            <Button Content="Facilități Hotel" Command="{Binding ShowFacilitiesCommand}" Style="{StaticResource SidebarButtonStyle}"/>
             <Button Content="Notificări" Command="{Binding ShowNotificationsCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+            <!-- Istoric Facturi -->
+            <Button Content="Chitanțele Mele" Command="{Binding ShowMyReceiptsCommand}" Style="{StaticResource SidebarButtonStyle}"/>
 
-            <Separator Background="#2C3E50" Margin="10,20"/>
+            <Button Content="Checkout &amp; Plată" Command="{Binding ShowInvoiceCommand}" Background="#27AE60" Foreground="White" Margin="10"/>
+
+            <Separator Background="#34495E" Margin="10,20"/>
             <Button Content="Logout" Command="{Binding LogoutCommand}" Background="#E74C3C" Foreground="White" Margin="10"/>
         </StackPanel>
 

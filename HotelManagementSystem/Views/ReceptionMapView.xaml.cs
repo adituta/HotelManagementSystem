@@ -37,21 +37,41 @@ namespace HotelManagementSystem.Views
 
         private void UpdateCalendarBlackouts(System.Collections.Generic.List<HotelManagementSystem.Models.Reservation> reservations)
         {
-            RoomCalendar.BlackoutDates.Clear();
-
-            foreach (var res in reservations)
+            // Executăm asincron pe UI thread pentru a lăsa randarea să se termine
+            // Asta previne crash-ul de AutomationPeer (System.ArgumentNullException)
+            Dispatcher.InvokeAsync(() =>
             {
-                // Adăugăm intervalul ca indisponibil pe calendar
-                // BlackoutDates nu acceptă range-uri invalide, deci verificăm
-                if (res.CheckOutDate > res.CheckInDate)
+                try 
                 {
-                    // Blocăm de la checkin până la checkout
-                    RoomCalendar.BlackoutDates.Add(new CalendarDateRange(res.CheckInDate, res.CheckOutDate.AddDays(-1)));
-                    // AddDays(-1) pentru că în ziua de checkout camera se eliberează la prânz, 
-                    // dar pentru simplitate o marcăm ocupată sau liberă în funcție de politica hotelului.
-                    // De obicei o blocăm complet pentru vizualizare clară.
+                    RoomCalendar.BlackoutDates.Clear();
+                    
+                    if (reservations == null) return;
+
+                    DateTime minDate = RoomCalendar.DisplayDateStart ?? DateTime.MinValue;
+
+                    foreach (var res in reservations)
+                    {
+                        DateTime rawStart = res.CheckInDate.Date;
+                        DateTime rawEnd = res.CheckOutDate.AddDays(-1).Date;
+
+                        DateTime effectiveStart = rawStart < minDate ? minDate : rawStart;
+                        DateTime effectiveEnd = rawEnd;
+
+                        if (effectiveEnd < effectiveStart) continue;
+
+                        try
+                        {
+                            RoomCalendar.BlackoutDates.Add(new CalendarDateRange(effectiveStart, effectiveEnd));
+                        }
+                        catch (ArgumentOutOfRangeException) { }
+                    }
                 }
-            }
+                catch (Exception ex)
+                {
+                    // Ignorăm erorile de UI minore pentru a nu bloca aplicația
+                    System.Diagnostics.Debug.WriteLine("Calendar Update Error: " + ex.Message);
+                }
+            }, System.Windows.Threading.DispatcherPriority.Background);
         }
     }
 }

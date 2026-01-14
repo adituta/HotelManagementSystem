@@ -31,12 +31,14 @@ namespace HotelManagementSystem.ViewModels
         public List<UserRole> RoleTypes { get { return Enum.GetValues(typeof(UserRole)).Cast<UserRole>().ToList(); } }
 
         public RelayCommand SaveEmployeeCommand { get; private set; }
+        public RelayCommand PaySalaryCommand { get; private set; } // Added
 
         public ManageEmployeesViewModel()
         {
             NewUser = new User();
             LoadEmployees();
             SaveEmployeeCommand = new RelayCommand(o => ExecuteSave());
+            PaySalaryCommand = new RelayCommand(ExecutePaySalary); // Added
         }
 
         private void LoadEmployees()
@@ -53,7 +55,7 @@ namespace HotelManagementSystem.ViewModels
         {
             if (string.IsNullOrEmpty(NewUser.Username) || string.IsNullOrEmpty(NewUser.Password))
             {
-                MessageBox.Show("Username-ul și Parola sunt obligatorii!");
+                MessageBoxHelper.Show("Username-ul și Parola sunt obligatorii!", "Eroare");
                 return;
             }
 
@@ -63,9 +65,63 @@ namespace HotelManagementSystem.ViewModels
                 db.SaveChanges();
             }
 
-            MessageBox.Show("Angajat adăugat cu succes!");
+            MessageBoxHelper.Show("Angajat adăugat cu succes!", "Succes");
             LoadEmployees(); // Refresh listă
             NewUser = new User(); // Reset formular
+        }
+
+        private void ExecutePaySalary(object parameter)
+        {
+            var employee = parameter as User;
+            if (employee == null) return;
+
+            try
+            {
+                using (var db = new HotelDBContext())
+                {
+                    // 1. Verificăm dacă a fost plătit luna asta
+                    var currentMonth = DateTime.Now.Month;
+                    var currentYear = DateTime.Now.Year;
+
+                    bool alreadyPaid = db.SalaryPayments.Any(p => p.UserId == employee.Id && 
+                                                                  p.PaymentDate.Month == currentMonth && 
+                                                                  p.PaymentDate.Year == currentYear);
+
+                    if (alreadyPaid)
+                    {
+                        MessageBoxHelper.Show($"Angajatul {employee.FullName} a încasat deja salariul pe această lună!", "Atenție");
+                        return;
+                    }
+
+                    // 2. Procesăm plata
+                    var payment = new SalaryPayment
+                    {
+                        UserId = employee.Id,
+                        Amount = 2500, // Suma fixă
+                        PaymentDate = DateTime.Now,
+                        Details = $"Salariu {DateTime.Now:MMMM yyyy} (Individual)"
+                    };
+
+                    db.SalaryPayments.Add(payment);
+                    
+                    // Notificare pentru angajat
+                    var notif = new Notification
+                    {
+                        UserId = employee.Id,
+                        Message = $"Ai primit salariul în valoare de {payment.Amount} RON (Plată Individuală).",
+                        CreatedAt = DateTime.Now,
+                        IsRead = false
+                    };
+                    db.Notifications.Add(notif);
+
+                    db.SaveChanges();
+                    MessageBoxHelper.Show($"Salariu plătit cu succes lui {employee.FullName}!", "Succes");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.Show("Eroare la procesarea plății: " + ex.Message, "Eroare");
+            }
         }
     }
 }

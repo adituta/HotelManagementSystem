@@ -57,7 +57,7 @@ namespace HotelManagementSystem.ViewModels
             // 1. Validări de bază
             if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(FullName))
             {
-                MessageBox.Show("Toate câmpurile sunt obligatorii.");
+                MessageBoxHelper.Show("Toate câmpurile sunt obligatorii.", "Eroare");
                 return;
             }
 
@@ -66,7 +66,7 @@ namespace HotelManagementSystem.ViewModels
                 // 2. Verificăm dacă utilizatorul există deja
                 if (db.Users.Any(u => u.Username == Username))
                 {
-                    MessageBox.Show("Acest nume de utilizator este deja folosit.");
+                    MessageBoxHelper.Show("Acest nume de utilizator este deja folosit.", "Eroare");
                     return;
                 }
 
@@ -83,7 +83,7 @@ namespace HotelManagementSystem.ViewModels
                 db.SaveChanges();
             }
 
-            MessageBox.Show("Cont creat cu succes! Te poți loga acum.");
+            MessageBoxHelper.Show("Cont creat cu succes! Te poți loga acum.", "Succes");
             _mainVM.CurrentView = new LoginViewModel(_mainVM);
         }
     }

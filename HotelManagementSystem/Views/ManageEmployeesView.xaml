@@ -6,54 +6,108 @@
              xmlns:local="clr-namespace:HotelManagementSystem.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="White" Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <!-- Formular Adăugare -->
-            <RowDefinition Height="*"/>
-            <!-- Tabel Angajați -->
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Background="#ECF0F1" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Formular Adăugare -->
+                <RowDefinition Height="Auto"/>
+                <!-- Titlu Lista -->
+                <RowDefinition Height="*"/>
+                <!-- Lista Carduri Angajați -->
+            </Grid.RowDefinitions>
 
-        <!-- Formular Adăugare/Editare -->
-        <Border Background="#F8F9FA" Padding="15" CornerRadius="5" Margin="0,0,0,20">
-            <StackPanel>
-                <TextBlock Text="Adaugă Angajat Nou" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                <UniformGrid Columns="3">
-                    <StackPanel Margin="5">
-                        <TextBlock Text="Nume Complet:"/>
-                        <TextBox Text="{Binding NewUser.FullName, UpdateSourceTrigger=PropertyChanged}"/>
-                    </StackPanel>
-                    <StackPanel Margin="5">
-                        <TextBlock Text="Utilizator (Login):"/>
-                        <TextBox Text="{Binding NewUser.Username, UpdateSourceTrigger=PropertyChanged}"/>
-                    </StackPanel>
-                    <StackPanel Margin="5">
-                        <TextBlock Text="Parolă:"/>
-                        <TextBox Text="{Binding NewUser.Password, UpdateSourceTrigger=PropertyChanged}"/>
-                    </StackPanel>
-                    <StackPanel Margin="5">
-                        <TextBlock Text="Rol:"/>
-                        <ComboBox ItemsSource="{Binding RoleTypes}" SelectedItem="{Binding NewUser.Role}"/>
-                    </StackPanel>
-                    <StackPanel Margin="5">
-                        <TextBlock Text="Etaj Asignat (doar Cameriste):"/>
-                        <TextBox Text="{Binding NewUser.AssignedFloor, UpdateSourceTrigger=PropertyChanged}"/>
-                    </StackPanel>
-                    <Button Content="Salvează Angajat" Command="{Binding SaveEmployeeCommand}" 
-                        Background="#27AE60" Foreground="White" Margin="5,15,5,5" Height="30"/>
-                </UniformGrid>
-            </StackPanel>
-        </Border>
+            <!-- Formular Adăugare/Editare -->
+            <Border Grid.Row="0" Background="White" Padding="20" CornerRadius="8" Margin="0,0,0,30">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="Adaugă Angajat Nou" FontSize="20" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,20"/>
+                    <UniformGrid Columns="2">
+                        <StackPanel Margin="0,0,20,15">
+                            <TextBlock Text="Nume Complet" Foreground="#7F8C8D" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewUser.FullName, UpdateSourceTrigger=PropertyChanged}" Padding="5" Height="30" VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Rol (Funcție)" Foreground="#7F8C8D" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding RoleTypes}" SelectedItem="{Binding NewUser.Role}" Height="30" VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,20,15">
+                            <TextBlock Text="Utilizator (Login)" Foreground="#7F8C8D" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewUser.Username, UpdateSourceTrigger=PropertyChanged}" Padding="5" Height="30" VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Parolă" Foreground="#7F8C8D" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewUser.Password, UpdateSourceTrigger=PropertyChanged}" Padding="5" Height="30" VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,20,0">
+                            <TextBlock Text="Etaj Asignat (Doar Cameriste)" Foreground="#7F8C8D" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NewUser.AssignedFloor, UpdateSourceTrigger=PropertyChanged}" Padding="5" Height="30" VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                        
+                        <!-- Buton Salvare -->
+                        <Button Content="+ Salvează Angajat" Command="{Binding SaveEmployeeCommand}" 
+                            Background="#27AE60" Foreground="White" FontWeight="Bold" 
+                            Height="40" VerticalAlignment="Bottom" Margin="0,0,0,1" BorderThickness="0" Cursor="Hand"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
 
-        <!-- Tabelul cu Angajați -->
-        <DataGrid Grid.Row="1" ItemsSource="{Binding EmployeesList}" AutoGenerateColumns="False" 
-              CanUserAddRows="False" SelectionMode="Single" Background="Transparent">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Nume" Binding="{Binding FullName}" Width="*"/>
-                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="100"/>
-                <DataGridTextColumn Header="Rol" Binding="{Binding Role}" Width="100"/>
-                <DataGridTextColumn Header="Etaj" Binding="{Binding AssignedFloor}" Width="50"/>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+            <TextBlock Grid.Row="1" Text="Echipa Hotelului" FontSize="22" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,15"/>
+
+            <!-- Lista Angajați (Carduri) -->
+            <ItemsControl Grid.Row="2" ItemsSource="{Binding EmployeesList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="White" Width="260" Margin="0,0,20,20" CornerRadius="8" Padding="20">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+                            </Border.Effect>
+                            <StackPanel>
+                                <!-- Avatar / Initials placeholder -->
+                                <Border Width="60" Height="60" CornerRadius="30" Background="#3498DB" Margin="0,0,0,15" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding FullName, StringFormat={}{0:1}}" FontSize="24" FontWeight="Bold" Foreground="White" 
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <TextBlock Text="{Binding FullName}" FontSize="18" FontWeight="Bold" Foreground="#2C3E50" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Role}" FontSize="14" Foreground="#7F8C8D" HorizontalAlignment="Center" Margin="0,2,0,10"/>
+                                
+                                <Separator Background="#ECF0F1" Margin="10"/>
+
+                                <Grid Margin="0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="User:" FontWeight="SemiBold" Foreground="#95A5A6"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Username}" Foreground="#34495E" HorizontalAlignment="Right"/>
+                                </Grid>
+                                
+                                <Grid Margin="0,0,0,15">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Etaj:" FontWeight="SemiBold" Foreground="#95A5A6" Visibility="{Binding AssignedFloor, Converter={StaticResource BooleanToVisibilityConverter}}"/> <!-- Would need converter logic check or simple trigger -->
+                                    <TextBlock Grid.Column="1" Text="{Binding AssignedFloor}" Foreground="#34495E" HorizontalAlignment="Right"/>
+                                </Grid>
+
+                                <Button Content="Plătește Salariu" 
+                                        Command="{Binding DataContext.PaySalaryCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                        CommandParameter="{Binding}"
+                                        Background="#F39C12" Foreground="White" FontWeight="Bold" BorderThickness="0" Height="35" Cursor="Hand"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

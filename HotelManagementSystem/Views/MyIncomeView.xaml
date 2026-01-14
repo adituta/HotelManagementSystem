@@ -1,0 +1,62 @@
+<UserControl x:Class="HotelManagementSystem.Views.MyIncomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HotelManagementSystem.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="#ECF0F1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#34495E" Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="0" Command="{Binding BackCommand}" Content="Înapoi" Width="100" Height="30" Background="#E74C3C" Foreground="White" FontWeight="Bold" Margin="0,0,20,0"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Istoric Venituri" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                </StackPanel>
+
+                <TextBlock Grid.Column="2" Text="{Binding TotalEarned, StringFormat='Total Încasat: {0} RON'}" FontSize="18" Foreground="#2ECC71" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- List -->
+        <ScrollViewer Grid.Row="1" Margin="20" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding SalaryList}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="White" CornerRadius="8" Margin="0,0,0,10" Padding="15">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+                            </Border.Effect>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding Details}" FontWeight="Bold" FontSize="16" Foreground="#2C3E50"/>
+                                    <TextBlock Text="{Binding PaymentDate, StringFormat='Data plății: {0:dd.MM.yyyy HH:mm}'}" Foreground="#7F8C8D" Margin="0,5,0,0"/>
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="1" Text="{Binding Amount, StringFormat='{}{0} RON'}" FontSize="18" FontWeight="Bold" Foreground="#27AE60" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

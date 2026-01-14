@@ -53,7 +53,10 @@ namespace HotelManagementSystem.ViewModels
                 // Pentru simplitate aici, calculăm o medie sau sumăm dintr-un câmp dedicat
                 decimal spaSalaries = db.SpaAppointments.Count() * 20; // Exemplu: 20 RON/oră manopera
 
-                TotalExpenses = foodExpenses + spaSalaries;
+                // C. Salarii Lunare Fixe (din tabelul SalaryPayments)
+                decimal fixedSalaries = db.SalaryPayments.Sum(s => (decimal?)s.Amount) ?? 0;
+
+                TotalExpenses = foodExpenses + spaSalaries + fixedSalaries;
 
                 // 3. STATISTICI
                 TotalReservationsCount = db.Reservations.Count();

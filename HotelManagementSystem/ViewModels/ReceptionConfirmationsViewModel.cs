@@ -47,13 +47,28 @@ namespace HotelManagementSystem.ViewModels
             if (res == null) return;
             using (var db = new HotelDBContext())
             {
-                var dbRes = db.Reservations.Find(res.Id);
+                var dbRes = db.Reservations
+                              .Include("Rooms")
+                              .FirstOrDefault(r => r.Id == res.Id);
+
                 if (dbRes != null)
                 {
                     dbRes.Status = ReservationStatus.Active;
+                    
+                    // CRITICAL FIX: Daca CheckIn-ul e AZI (sau in trecut), camera devine fizic OCUPATA (Roșu)
+                    if (dbRes.CheckInDate <= DateTime.Today)
+                    {
+                         foreach(var room in dbRes.Rooms)
+                         {
+                             // Re-aducem camera din context daca e nevoie, sau updated direct
+                             // (EF urmareste obiectele din dbRes.Rooms fiindca e acelasi context)
+                             room.Status = RoomStatus.Occupied;
+                         }
+                    }
+
                     db.SaveChanges();
                     NotificationService.Send(res.UserId, "Rezervarea dvs. a fost confirmată! Menul de facilități este acum activ.");
-                    MessageBox.Show("Rezervare confirmată! Clientul are acum acces la servicii.");
+                    MessageBoxHelper.Show("Rezervare confirmată! Clientul are acum acces la servicii.", "Succes");
                     LoadPendingReservations();
                 }
             }

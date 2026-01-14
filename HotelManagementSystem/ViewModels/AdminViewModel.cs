@@ -1,9 +1,12 @@
 ﻿using HotelManagementSystem.Helpers;
+using HotelManagementSystem.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 
 namespace HotelManagementSystem.ViewModels
@@ -24,8 +27,11 @@ namespace HotelManagementSystem.ViewModels
         public RelayCommand ShowFinanceCommand { get; private set; }
 
         public RelayCommand ShowRoomsCommand { get; private set; }
+        public RelayCommand ShowPendingReceiptsCommand { get; private set; } // Adaugat
+        public ICommand GenerateReportCommand { get; private set; } // Added
+        public ICommand ProcessSalariesCommand { get; private set; } // Added
 
-        public AdminViewModel(MainViewModel mainVM)
+        public AdminViewModel(MainViewModel mainVM) // Kept original parameter name
         {
             _mainVM = mainVM;
             LogoutCommand = new RelayCommand(o => _mainVM.CurrentView = new LoginViewModel(_mainVM));
@@ -46,6 +52,9 @@ namespace HotelManagementSystem.ViewModels
 
             ///Afisare camere
             ShowRoomsCommand = new RelayCommand(o => CurrentAdminSection = new ReceptionMapViewModel());
+
+            // Aprobare facturi
+            ShowPendingReceiptsCommand = new RelayCommand(o => CurrentAdminSection = new PendingReceiptsViewModel(this));
         }
     }
 }

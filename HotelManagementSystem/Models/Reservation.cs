@@ -17,6 +17,7 @@ namespace HotelManagementSystem.Models
         public DateTime CheckOutDate { get; set; }
         public ReservationStatus Status { get; set; }
         public decimal TotalPrice { get; set; }
+        public bool IsInvoiceApproved { get; set; } // Adăugat pentru aprobare admin
         public int NrPersons { get; set; } // Adăugat pentru bucătărie
 
         // Relație Many-to-Many simplă (fără tabel de legătură vizibil)
@@ -28,8 +29,11 @@ namespace HotelManagementSystem.Models
         public string ReviewComment { get; set; }
         public int? ReviewRating { get; set; }
 
+        public DateTime CreationDate { get; set; }
+
         public Reservation()
         {
+            CreationDate = DateTime.Now;
             Rooms = new List<Room>();
         }
     }

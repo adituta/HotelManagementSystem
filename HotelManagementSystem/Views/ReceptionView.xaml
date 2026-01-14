@@ -19,6 +19,7 @@
 
             <Button Content="Hartă Camere / Rezervări" Command="{Binding ShowMapCommand}" Style="{StaticResource SidebarButtonStyle}"/>
             <Button Content="Cereri Online (Confirmări)" Command="{Binding ShowRequestsCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+            <Button Content="Veniturile Mele" Command="{Binding ViewIncomeCommand}" Style="{StaticResource SidebarButtonStyle}"/>
 
             <Separator Background="#34495E" Margin="10,20"/>
             <!-- Buton logout -->

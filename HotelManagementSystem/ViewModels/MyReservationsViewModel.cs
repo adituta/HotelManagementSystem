@@ -7,29 +7,51 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace HotelManagementSystem.ViewModels
 {
     public class MyReservationsViewModel : BaseViewModel
     {
-        public ObservableCollection<Reservation> PastReservations { get; set; }
-        public RelayCommand ViewInvoiceCommand { get; private set; }
+        public ObservableCollection<Reservation> ReservationsList { get; set; }
+        
+        public bool HasReservations { get { return ReservationsList != null && ReservationsList.Count > 0; } }
+
+        public Visibility UserHasReservationsVisibility 
+        { 
+            get { return HasReservations ? Visibility.Visible : Visibility.Collapsed; } 
+        }
+
+        public Visibility EmptyStateVisibility
+        {
+            get { return !HasReservations ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
         private MainViewModel _main;
         private User _user;
 
         public MyReservationsViewModel(MainViewModel main, User user)
         {
-            _main = main; _user = user;
-            LoadHistory();
-            ViewInvoiceCommand = new RelayCommand(o => _main.CurrentView = new InvoiceViewModel(_user));
+            _main = main;
+            _user = user;
+            LoadReservations();
         }
 
-        private void LoadHistory()
+        private void LoadReservations()
         {
             using (var db = new HotelDBContext())
             {
-                var list = db.Reservations.Where(r => r.UserId == _user.Id && r.Status == ReservationStatus.Completed).ToList();
-                PastReservations = new ObservableCollection<Reservation>(list);
+                // Incarcam Active si Pending. Cele Completed sunt la "Chitante".
+                var list = db.Reservations.Include("Rooms")
+                    .Where(r => r.UserId == _user.Id && r.Status != ReservationStatus.Completed)
+                    .OrderByDescending(r => r.CreationDate)
+                    .ToList();
+                
+                ReservationsList = new ObservableCollection<Reservation>(list);
+                OnPropertyChanged("ReservationsList");
+                OnPropertyChanged("HasReservations");
+                OnPropertyChanged("UserHasReservationsVisibility");
+                OnPropertyChanged("EmptyStateVisibility");
             }
         }
     }

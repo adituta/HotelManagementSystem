@@ -68,6 +68,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helpers\NotificationService.cs" />
+    <Compile Include="Helpers\MessageBoxHelper.cs" />
+    <Compile Include="Helpers\RoomsToStringConverter.cs" />
     <Compile Include="Migrations\202512260021423_UpdateModelsToLatest.cs" />
     <Compile Include="Migrations\202512260021423_UpdateModelsToLatest.Designer.cs">
       <DependentUpon>202512260021423_UpdateModelsToLatest.cs</DependentUpon>
@@ -92,6 +94,9 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MakeReservationViewModel.cs" />
     <Compile Include="ViewModels\ManageEmployeesViewModel.cs" />
+    <Compile Include="ViewModels\MyReceiptsViewModel.cs" />
+    <Compile Include="ViewModels\PendingReceiptsViewModel.cs" />
+    <Compile Include="ViewModels\MyIncomeViewModel.cs" />
     <Compile Include="ViewModels\MyReservationsViewModel.cs" />
     <Compile Include="ViewModels\ReceptionConfirmationsViewModel.cs" />
     <Compile Include="ViewModels\ReceptionMapViewModel.cs" />
@@ -105,6 +110,9 @@
     </Compile>
     <Compile Include="Views\ClientDashboardView.xaml.cs">
       <DependentUpon>ClientDashboardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CustomMessageBoxWindow.xaml.cs">
+      <DependentUpon>CustomMessageBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FacilitiesView.xaml.cs">
       <DependentUpon>FacilitiesView.xaml</DependentUpon>
@@ -132,6 +140,18 @@
     </Compile>
     <Compile Include="Views\NotificationsView.xaml.cs">
       <DependentUpon>NotificationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MyReceiptsView.xaml.cs">
+      <DependentUpon>MyReceiptsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MyIncomeView.xaml.cs">
+      <DependentUpon>MyIncomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MyReservationsView.xaml.cs">
+      <DependentUpon>MyReservationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PendingReceiptsView.xaml.cs">
+      <DependentUpon>PendingReceiptsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ReceptionConfirmationsView.xaml.cs">
       <DependentUpon>ReceptionConfirmationsView.xaml</DependentUpon>
@@ -171,6 +191,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CustomMessageBoxWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\FacilitiesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -204,6 +228,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NotificationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MyReceiptsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MyIncomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MyReservationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PendingReceiptsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -241,6 +281,7 @@
     <Compile Include="Models\FoodOrder.cs" />
     <Compile Include="Models\HotelDBContext.cs" />
     <Compile Include="Models\SpaAppointment.cs" />
+    <Compile Include="Models\SalaryPayment.cs" />
     <Compile Include="Models\Reservation.cs" />
     <Compile Include="Models\SpaService.cs" />
     <Compile Include="Models\User.cs" />

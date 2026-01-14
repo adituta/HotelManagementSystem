@@ -34,6 +34,7 @@ namespace HotelManagementSystem.ViewModels
         public RelayCommand ShowFacilitiesCommand { get; private set; }
 
         public RelayCommand ShowInvoiceCommand { get; private set; }
+        public RelayCommand ShowMyReceiptsCommand { get; private set; } // Adaugat
 
         public List<Reservation> AllMyReservations { get; set; }
 
@@ -62,22 +63,33 @@ namespace HotelManagementSystem.ViewModels
 
             // Comenzi pentru schimbarea paginilor interne
             ShowMakeReservationCommand = new RelayCommand(o => CurrentClientSection = new MakeReservationViewModel(_loggedUser));
+            
+            ShowInvoiceCommand = new RelayCommand(o => 
+            {
+                CurrentClientSection = new InvoiceViewModel(_loggedUser);
+            });
 
             ShowFacilitiesCommand = new RelayCommand(o =>
             {
                 CurrentClientSection = new FacilitiesViewModel(_loggedUser);
             });
 
-            //Deschide factura
-            ShowInvoiceCommand = new RelayCommand(o =>
-            {
-                CurrentClientSection = new InvoiceViewModel(_loggedUser);
-            });
-
             //afisare notificari
             ShowNotificationsCommand = new RelayCommand(o => 
             {
                 CurrentClientSection = new NotificationsViewModel(_loggedUser);
+            });
+
+            // Afișare istoric facturi
+            ShowMyReceiptsCommand = new RelayCommand(o =>
+            {
+                CurrentClientSection = new MyReceiptsViewModel(_loggedUser, this);
+            });
+
+            // Afisare rezervari
+            ShowMyReservationsCommand = new RelayCommand(o =>
+            {
+                CurrentClientSection = new MyReservationsViewModel(_mainVM, _loggedUser);
             });
 
             // Pagina implicită

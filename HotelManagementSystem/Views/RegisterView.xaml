@@ -5,35 +5,123 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HotelManagementSystem.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="#F0F2F5">
-        <Border Background="White" Width="350" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="30" CornerRadius="10">
+             d:DesignHeight="600" d:DesignWidth="900">
+    
+    <Grid>
+        <!-- Gradient Background -->
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#2C3E50" Offset="0.0"/>
+                <GradientStop Color="#4CA1AF" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <!-- Register Card -->
+        <Border Background="White" CornerRadius="15" Width="420" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="15" Color="#CCCCCC" ShadowDepth="2"/>
+                <DropShadowEffect BlurRadius="30" ShadowDepth="10" Opacity="0.3" Color="Black"/>
             </Border.Effect>
-            <StackPanel>
-                <TextBlock Text="Creare Cont Client" FontSize="22" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" Foreground="#2C3E50"/>
 
-                <TextBlock Text="Nume Complet:"/>
-                <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" Margin="0,5" Height="25"/>
+            <StackPanel Margin="40">
+                <!-- Header -->
+                <TextBlock Text="Creare Cont Client" FontSize="26" FontWeight="Bold" Foreground="#2C3E50" HorizontalAlignment="Center" Margin="0,0,0,30"/>
 
-                <TextBlock Text="Utilizator:" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,5" Height="25"/>
+                <!-- Full Name -->
+                <TextBlock Text="Nume Complet" Foreground="#34495E" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <Border CornerRadius="8" Background="#F0F2F5" BorderBrush="Transparent" BorderThickness="1" Height="40" Margin="0,0,0,15">
+                     <Grid>
+                        <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="Transparent" BorderThickness="0" 
+                                 VerticalContentAlignment="Center" Padding="10" FontSize="14"
+                                 Validation.ErrorTemplate="{x:Null}"/>
+                    </Grid>
+                </Border>
+                
+                <!-- Username -->
+                <TextBlock Text="Utilizator" Foreground="#34495E" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <Border CornerRadius="8" Background="#F0F2F5" BorderBrush="Transparent" BorderThickness="1" Height="40" Margin="0,0,0,15">
+                     <Grid>
+                        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="Transparent" BorderThickness="0" 
+                                 VerticalContentAlignment="Center" Padding="10" FontSize="14"
+                                 Validation.ErrorTemplate="{x:Null}"/>
+                    </Grid>
+                </Border>
 
-                <TextBlock Text="Parolă:" Margin="0,10,0,0"/>
-                <PasswordBox x:Name="PassBox" Margin="0,5" Height="25"/>
+                <!-- Password -->
+                <TextBlock Text="Parolă" Foreground="#34495E" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <Border CornerRadius="8" Background="#F0F2F5" BorderBrush="Transparent" BorderThickness="1" Height="40" Margin="0,0,0,15">
+                    <Grid>
+                        <PasswordBox x:Name="PassBox" 
+                                     Background="Transparent" BorderThickness="0" 
+                                     VerticalContentAlignment="Center" Padding="10" FontSize="14"/>
+                    </Grid>
+                </Border>
 
-                <TextBlock Text="Confirmă Parolă:" Margin="0,10,0,0"/>
-                <PasswordBox x:Name="ConfirmPassBox" Margin="0,5" Height="25"/>
+                <!-- Confirm Password -->
+                <TextBlock Text="Confirmă Parolă" Foreground="#34495E" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <Border CornerRadius="8" Background="#F0F2F5" BorderBrush="Transparent" BorderThickness="1" Height="40" Margin="0,0,0,30">
+                    <Grid>
+                        <PasswordBox x:Name="ConfirmPassBox" 
+                                     Background="Transparent" BorderThickness="0" 
+                                     VerticalContentAlignment="Center" Padding="10" FontSize="14"/>
+                    </Grid>
+                </Border>
 
+                <!-- Register Button -->
                 <Button Content="Înregistrare" 
-                    Command="{Binding RegisterCommand}" 
-                    CommandParameter="{Binding ElementName=PassBox}"
-                    Margin="0,25,0,0" Height="35" Background="#3498DB" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
+                        Command="{Binding RegisterCommand}" 
+                        CommandParameter="{Binding ElementName=PassBox}"
+                        Height="45" FontSize="16" FontWeight="Bold" Cursor="Hand"
+                        Foreground="White">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#27AE60"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" CornerRadius="22" Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#2ECC71"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#219150"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
+                <!-- Back to Login Button -->
                 <Button Content="Anulează / Înapoi la Login" 
-                    Command="{Binding BackCommand}" 
-                    Background="Transparent" BorderThickness="0" Foreground="Gray" Margin="0,10,0,0" Cursor="Hand"/>
+                        Command="{Binding BackCommand}" 
+                        Background="Transparent" Foreground="#7F8C8D" BorderThickness="0" 
+                        HorizontalAlignment="Center" Margin="0,15,0,0" Cursor="Hand"
+                        FontSize="14">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="#34495E"/>
+                                                <Setter Property="TextDecorations" Value="Underline"/>
+                                                <Setter Property="Cursor" Value="Hand"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </StackPanel>
         </Border>
     </Grid>

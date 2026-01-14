@@ -41,20 +41,34 @@ namespace HotelManagementSystem.ViewModels
         public RelayCommand BookCommand { get; private set; }
         private User _client;
 
+        public DateTime MinDate { get; set; } = DateTime.Today; // Added for UI constraint
+
         public MakeReservationViewModel(User client)
         {
-            StartDate = DateTime.Now;
-            EndDate = DateTime.Now.AddDays(1);
+            StartDate = DateTime.Today; // Reset to Today
+            EndDate = DateTime.Today.AddDays(1);
             NrPersons = 1;
             _client = client;
             SearchCommand = new RelayCommand(o => ExecuteSearch());
             BookCommand = new RelayCommand(room => ExecuteBook(room as Room));
         }
 
-        // În interiorul MakeReservationViewModel.cs
-
         private void ExecuteSearch()
         {
+            // Validare Data
+            if (StartDate < DateTime.Today)
+            {
+                MessageBoxHelper.Show("Nu puteți selecta o dată din trecut!", "Eroare Dată");
+                StartDate = DateTime.Today; // Reset check
+                return;
+            }
+
+            if (EndDate <= StartDate)
+            {
+                MessageBoxHelper.Show("Data de plecare trebuie să fie după data sosirii (minim 1 noapte)!", "Eroare Dată");
+                return;
+            }
+
             using (var db = new HotelDBContext())
             {
                 // 1. Găsim rezervările care se suprapun cu perioada selectată
@@ -67,9 +81,18 @@ namespace HotelManagementSystem.ViewModels
                     .ToList();
 
                 // 2. Filtrăm camerele disponibile de tipul selectat
+                // CRITICAL FIX: Daca rezervarea incepe AZI, camera trebuie sa fie 'Free' acum. 
+                // Daca e 'CleaningRequired', nu o putem da clientului instant.
+                bool isStartingToday = StartDate.Date == DateTime.Today;
+
                 var freeRooms = db.Rooms
                     .Where(r => r.Type == SelectedRoomType && !busyRoomIds.Contains(r.Id))
-                    .ToList();
+                    .ToList(); // Aducem in memorie pentru filtrare complexa (Status check)
+
+                if (isStartingToday)
+                {
+                    freeRooms = freeRooms.Where(r => r.Status == RoomStatus.Free).ToList();
+                }
 
                 AvailableRooms = new ObservableCollection<Room>(freeRooms);
             }
@@ -99,7 +122,7 @@ namespace HotelManagementSystem.ViewModels
                 db.Reservations.Add(newReservation);
                 db.SaveChanges();
 
-                MessageBox.Show("Rezervarea a fost trimisă spre confirmare la recepție!");
+                MessageBoxHelper.Show("Rezervarea a fost trimisă spre confirmare la recepție!", "Rezervare Trimisă");
                 ExecuteSearch();
             }
         }

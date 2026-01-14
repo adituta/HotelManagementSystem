@@ -4,6 +4,138 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              Background="#F4F6F7">
 
+    <UserControl.Resources>
+        <!-- CONVERTERS -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <!-- STYLE CALENDAR "CUTE" & MODERN -->
+        <Style x:Key="BeautifulCalendarStyle" TargetType="Calendar">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            
+            <Setter Property="CalendarItemStyle">
+                <Setter.Value>
+                    <Style TargetType="CalendarItem">
+                        <Setter Property="Margin" Value="0,10,0,0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="CalendarItem">
+                                    <ControlTemplate.Resources>
+                                        <DataTemplate x:Key="{x:Static CalendarItem.DayTitleTemplateResourceKey}">
+                                            <TextBlock Foreground="#7F8C8D" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center" Margin="0,5" Text="{Binding}"/>
+                                        </DataTemplate>
+                                    </ControlTemplate.Resources>
+                                    <Grid x:Name="PART_Root">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <Border Grid.Row="0" Margin="5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Button x:Name="PART_PreviousButton" Grid.Column="0" Content="&lt;" Width="30" Height="25"
+                                                        Foreground="#2C3E50" Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
+                                                
+                                                <!-- FIX: Binding to AncestorType=Calendar to get correct DisplayDate -->
+                                                <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontWeight="Bold" Foreground="#2C3E50"
+                                                           Text="{Binding DisplayDate, RelativeSource={RelativeSource AncestorType=Calendar}, StringFormat='MMMM yyyy'}"/>
+                                                
+                                                <Button x:Name="PART_NextButton" Grid.Column="2" Content="&gt;" Width="30" Height="25"
+                                                        Foreground="#2C3E50" Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
+                                            </Grid>
+                                        </Border>
+                                        <Grid Grid.Row="1" Margin="5,10,5,5">
+                                            <Grid x:Name="PART_MonthView">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                            </Grid>
+                                            <Grid x:Name="PART_YearView" Visibility="Hidden">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            
+            <Setter Property="CalendarDayButtonStyle">
+                <Setter.Value>
+                    <Style TargetType="CalendarDayButton">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Margin" Value="2"/>
+                        <Setter Property="Width" Value="32"/>
+                        <Setter Property="Height" Value="32"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="CalendarDayButton">
+                                    <Border x:Name="dayBorder" Background="{TemplateBinding Background}" CornerRadius="16">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="dayBorder" Property="Background" Value="#ECF0F1"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="dayBorder" Property="Background" Value="#27AE60"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                        <Trigger Property="IsToday" Value="True">
+                                            <Setter TargetName="dayBorder" Property="BorderBrush" Value="#27AE60"/>
+                                            <Setter TargetName="dayBorder" Property="BorderThickness" Value="2"/>
+                                        </Trigger>
+                                        <Trigger Property="IsBlackedOut" Value="True">
+                                            <Setter Property="Opacity" Value="0.3"/>
+                                            <Setter Property="Cursor" Value="No"/>
+                                        </Trigger>
+                                        <Trigger Property="IsInactive" Value="True">
+                                            <Setter Property="Opacity" Value="0.3"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -11,7 +143,7 @@
             <ColumnDefinition Width="380"/>
             <!-- Panou Comenzi -->
         </Grid.ColumnDefinitions>
-
+        
         <!-- PARTEA STÂNGĂ: GRIDUL DE CAMERE -->
         <Border Grid.Column="0" Margin="10">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -19,18 +151,32 @@
                     <TextBlock Text="Hartă Camere &amp; Disponibilitate" FontSize="22" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
 
                     <!-- Legendă -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <Rectangle Width="15" Height="15" Fill="#27AE60" Margin="0,0,5,0"/>
-                        <TextBlock Text="Liber Astăzi " Margin="0,0,15,0"/>
-                        <Rectangle Width="15" Height="15" Fill="#E74C3C" Margin="0,0,5,0"/>
-                        <TextBlock Text="Ocupat Astăzi " Margin="0,0,15,0"/>
-                        <Rectangle Width="15" Height="15" Fill="#F1C40F" Margin="0,0,5,0"/>
-                        <TextBlock Text="Curățenie " Margin="0,0,20,0"/>
+                    <!-- FIX: WrapPanel in loc de StackPanel pentru a evita taierea continutului -->
+                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,15,5">
+                            <Rectangle Width="15" Height="15" Fill="#27AE60" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Liber Astăzi" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,15,5">
+                            <Rectangle Width="15" Height="15" Fill="#E74C3C" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Ocupat Astăzi" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,15,5">
+                            <Rectangle Width="15" Height="15" Fill="#F1C40F" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Necesită Curățenie" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,15,5">
+                            <Rectangle Width="15" Height="15" Fill="#3498DB" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Curățenie în Curs" VerticalAlignment="Center"/>
+                        </StackPanel>
 
                         <!-- Buton Refresh -->
                         <Button Content="⟳ Actualizează" Command="{Binding RefreshCommand}" 
-                                Background="Transparent" BorderThickness="0" Foreground="#2980B9" Cursor="Hand" FontWeight="Bold"/>
-                    </StackPanel>
+                                Background="Transparent" BorderThickness="0" Foreground="#2980B9" Cursor="Hand" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,0,5"/>
+                    </WrapPanel>
 
                     <ItemsControl ItemsSource="{Binding AllRooms}">
                         <ItemsControl.ItemsPanel>
@@ -67,6 +213,10 @@
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Status}" Value="CleaningRequired">
                                                                 <Setter TargetName="border" Property="Background" Value="#F1C40F"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="CleaningInProgress">
+                                                                <Setter TargetName="border" Property="Background" Value="#3498DB"/>
+                                                                <Setter TargetName="border" Property="TextBlock.Foreground" Value="White"/>
                                                             </DataTrigger>
                                                         </ControlTemplate.Triggers>
                                                     </ControlTemplate>
@@ -108,9 +258,25 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- CALENDAR DISPONIBILITATE -->
                     <TextBlock Text="Disponibilitate Cameră:" FontWeight="Bold" Margin="0,5"/>
-                    <Calendar x:Name="RoomCalendar" SelectionMode="SingleRange" Margin="0,0,0,15"/>
+                    <Border Background="#F9F9F9" CornerRadius="8" BorderBrush="#EEE" BorderThickness="1" Padding="10">
+                         <Calendar x:Name="RoomCalendar" 
+                                   SelectionMode="SingleDate" 
+                                   SelectedDate="{Binding CalendarSelectedDate, Mode=TwoWay}"
+                                   DisplayDateStart="{x:Static sys:DateTime.Today}"
+                                   Style="{StaticResource BeautifulCalendarStyle}"
+                                   Margin="0"
+                                   Background="Transparent"
+                                   BorderThickness="0"/>
+                    </Border>
+                    
+                    <!-- MESAJ DISPONIBILITATE -->
+                    <Border Background="{Binding AvailabilityStatusColor}" CornerRadius="5" Padding="10" Margin="0,10">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding CalendarSelectedDate, StringFormat='{}{0:dd MMM}: '}" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="{Binding AvailabilityStatusMessage}" FontWeight="SemiBold" Foreground="White"/>
+                        </StackPanel>
+                    </Border>
 
                     <Separator Margin="0,10"/>
 

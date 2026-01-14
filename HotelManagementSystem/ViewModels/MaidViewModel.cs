@@ -35,10 +35,12 @@ namespace HotelManagementSystem.ViewModels
 
             StartCleaningCommand = new RelayCommand(room => ExecuteUpdateStatus(room as Room, RoomStatus.CleaningInProgress));
             FinishCleaningCommand = new RelayCommand(room => ExecuteFinishCleaning(room as Room));
+            ViewIncomeCommand = new RelayCommand(o => _mainVM.CurrentView = new MyIncomeViewModel(_mainVM, _currentMaid));
             LogoutCommand = new RelayCommand(o => _mainVM.CurrentView = new LoginViewModel(_mainVM));
         }
 
         public RelayCommand LogoutCommand { get; private set; }
+        public RelayCommand ViewIncomeCommand { get; private set; }
 
         private void LoadAssignedRooms()
         {
