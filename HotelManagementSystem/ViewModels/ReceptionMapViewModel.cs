@@ -147,7 +147,16 @@ namespace HotelManagementSystem.ViewModels
 
         // --- LISTA DE DATE OCUPATE (Pentru Calendar) ---
         // Vom trimite această listă către View pentru a bloca datele
-        public List<Reservation> RoomFutureReservations { get; set; }
+        private List<Reservation> _roomFutureReservations;
+        public List<Reservation> RoomFutureReservations
+        {
+            get { return _roomFutureReservations; }
+            set 
+            { 
+                _roomFutureReservations = value; 
+                OnPropertyChanged("RoomFutureReservations"); 
+            }
+        }
 
         // Eveniment pentru a notifica View-ul să redeseneze calendarul
         public event Action<List<Reservation>> OnScheduleLoaded;

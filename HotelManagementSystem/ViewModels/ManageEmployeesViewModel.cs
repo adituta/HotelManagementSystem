@@ -45,8 +45,8 @@ namespace HotelManagementSystem.ViewModels
         {
             using (var db = new HotelDBContext())
             {
-                // Luăm toți utilizatorii care NU sunt clienți
-                var list = db.Users.Where(u => u.Role != UserRole.Client).ToList();
+                // Luăm toți utilizatorii care NU sunt clienți și nici Administratori
+                var list = db.Users.Where(u => u.Role != UserRole.Client && u.Role != UserRole.Administrator).ToList();
                 EmployeesList = new ObservableCollection<User>(list);
             }
         }

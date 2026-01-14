@@ -2,11 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:helpers="clr-namespace:HotelManagementSystem.Helpers"
              Background="#F4F6F7">
 
     <UserControl.Resources>
         <!-- CONVERTERS -->
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <helpers:DateBlockedConverter x:Key="DateBlockedConverter"/>
 
         <!-- STYLE CALENDAR "CUTE" & MODERN -->
         <Style x:Key="BeautifulCalendarStyle" TargetType="Calendar">
@@ -123,6 +125,22 @@
                                             <Setter Property="Opacity" Value="0.3"/>
                                             <Setter Property="Cursor" Value="No"/>
                                         </Trigger>
+                                        <!-- NOU: DataTrigger pentru a bloca datele direct din Binding, evitând crash-ul de AutomationPeer -->
+                                        <DataTrigger Value="True">
+                                            <DataTrigger.Binding>
+                                                <MultiBinding Converter="{StaticResource DateBlockedConverter}">
+                                                    <!-- Data butonului (DataContext-ul este DateTime-ul zilei) -->
+                                                    <Binding Path="." />
+                                                    <!-- Lista de rezervări din ViewModel -->
+                                                    <Binding RelativeSource="{RelativeSource AncestorType=UserControl}" Path="DataContext.RoomFutureReservations"/>
+                                                </MultiBinding>
+                                            </DataTrigger.Binding>
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                            <Setter Property="Opacity" Value="0.2"/>
+                                            <Setter TargetName="dayBorder" Property="Background" Value="#7F8C8D"/>
+                                            <Setter TargetName="dayBorder" Property="BorderBrush" Value="#95A5A6"/>
+                                        </DataTrigger>
+                                        
                                         <Trigger Property="IsInactive" Value="True">
                                             <Setter Property="Opacity" Value="0.3"/>
                                         </Trigger>
