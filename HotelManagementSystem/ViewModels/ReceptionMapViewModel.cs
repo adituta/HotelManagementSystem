@@ -43,10 +43,14 @@ namespace HotelManagementSystem.ViewModels
             get { return _selectedClient; }
             set
             {
-                _selectedClient = value;
-                OnPropertyChanged("SelectedClient");
-                // Dacă selectăm un client existent, ștergem câmpurile de client nou
-                if (value != null) IsNewClientMode = false;
+                try {
+                    _selectedClient = value;
+                    OnPropertyChanged("SelectedClient");
+                    // Dacă selectăm un client existent, ștergem câmpurile de client nou
+                    if (value != null) IsNewClientMode = false;
+                } catch (Exception ex) {
+                    MessageBoxHelper.Show("Eroare la selectarea clientului: " + ex.Message, "Eroare");
+                }
             }
         }
 
@@ -57,9 +61,13 @@ namespace HotelManagementSystem.ViewModels
             get { return _isNewClientMode; }
             set
             {
-                _isNewClientMode = value;
-                OnPropertyChanged("IsNewClientMode");
-                if (value) SelectedClient = null; // Deselectăm clientul existent
+                try {
+                    _isNewClientMode = value;
+                    OnPropertyChanged("IsNewClientMode");
+                    if (value) SelectedClient = null; // Deselectăm clientul existent
+                } catch (Exception ex) {
+                    MessageBoxHelper.Show("Eroare la comutarea modului client nou: " + ex.Message, "Eroare");
+                }
             }
         }
 
@@ -126,16 +134,28 @@ namespace HotelManagementSystem.ViewModels
                 }
                 else
                 {
-                    if (CalendarSelectedDate.Date == DateTime.Today && 
-                       (SelectedRoom.Status == RoomStatus.CleaningRequired || SelectedRoom.Status == RoomStatus.CleaningInProgress))
+                    if (CalendarSelectedDate.Date == DateTime.Today)
                     {
-                         AvailabilityStatusMessage = $"INDISPONIBIL - Necesită Curățenie!";
-                         AvailabilityStatusColor = "#F1C40F"; 
+                        if (SelectedRoom.Status == RoomStatus.CleaningRequired)
+                        {
+                             AvailabilityStatusMessage = $"INDISPONIBIL - Necesită Curățenie!";
+                             AvailabilityStatusColor = "#F1C40F"; // Yellow
+                        }
+                        else if (SelectedRoom.Status == RoomStatus.CleaningInProgress)
+                        {
+                             AvailabilityStatusMessage = $"INDISPONIBIL - Curățenie în Curs!";
+                             AvailabilityStatusColor = "#3498DB"; // Blue
+                        }
+                        else
+                        {
+                            AvailabilityStatusMessage = "DISPONIBIL";
+                            AvailabilityStatusColor = "#27AE60"; // Green
+                        }
                     }
                     else
                     {
                         AvailabilityStatusMessage = "DISPONIBIL";
-                        AvailabilityStatusColor = "#27AE60"; 
+                        AvailabilityStatusColor = "#27AE60"; // Green
                     }
                 }
             }
@@ -284,6 +304,20 @@ namespace HotelManagementSystem.ViewModels
                     r.Status != ReservationStatus.Cancelled &&
                     r.Rooms.Any(room => room.Id == SelectedRoom.Id) &&
                     (StartDate < r.CheckOutDate && EndDate > r.CheckInDate));
+
+                // 2. Verificare Status Cameră (Pt încercare rezervare azi pe cameră Cleaning/Occupied care poate nu e prinsă bine de query sau e dirty)
+                if (StartDate.Date == DateTime.Today && SelectedRoom.Status != RoomStatus.Free)
+                {
+                     // Dacă e occupied 'vizual' dar nu prins de query (edge case), sau e cleaning
+                     if (SelectedRoom.Status == RoomStatus.Occupied) {
+                         isOccupied = true; 
+                     }
+                     if (SelectedRoom.Status == RoomStatus.CleaningRequired || SelectedRoom.Status == RoomStatus.CleaningInProgress)
+                     {
+                         MessageBoxHelper.Show($"Camera este în stadiul: {SelectedRoom.Status}. Nu poate fi rezervată începând de azi.", "Indisponibil");
+                         return;
+                     }
+                }
 
                 if (isOccupied)
                 {

@@ -278,7 +278,7 @@
 
                     <TextBlock Text="Disponibilitate Cameră:" FontWeight="Bold" Margin="0,5"/>
                     <Border Background="#F9F9F9" CornerRadius="8" BorderBrush="#EEE" BorderThickness="1" Padding="10">
-                         <Calendar x:Name="RoomCalendar" 
+                         <helpers:CrashSafeCalendar x:Name="RoomCalendar" 
                                    SelectionMode="SingleDate" 
                                    SelectedDate="{Binding CalendarSelectedDate, Mode=TwoWay}"
                                    DisplayDateStart="{x:Static sys:DateTime.Today}"
